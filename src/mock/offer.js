@@ -1,44 +1,47 @@
 import {checkInOffers, restaurantOffers, transportOffers} from "./data";
+import {POINT_TYPES} from "../constants";
 import {getRandomInt} from "../utils";
 
 const MIN_PRICE = 5;
 const MAX_PRICE = 100;
 
-// const offer = {
-//   id: 1,
-//   title: ``,
-//   price: ``,
-// };
-
-export const getOffers = (type) => {
-  let offers;
-  switch (type) {
+export const getOffers = (pointType) => {
+  let pointOffers;
+  switch (pointType) {
     case `Sightseeing`:
-      return [];
+      return null;
     case `Check-in`:
-      offers = checkInOffers;
+      pointOffers = checkInOffers;
       break;
     case `Restaurant`:
-      offers = restaurantOffers;
+      pointOffers = restaurantOffers;
       break;
     default:
-      offers = transportOffers;
+      pointOffers = transportOffers;
       break;
   }
 
-  return offers;
+  return pointOffers;
 };
 
-export const generateOffers = (type) => {
-  const offers = getOffers(type);
-  if (offers.length === 0) {
-    return [];
-  }
+export const generateOffers = () => {
+  const offers = new Map();
+  for (let i = 0; i < POINT_TYPES.length; i++) {
+    const pointOffers = getOffers(POINT_TYPES[i]);
+    if (!pointOffers) {
+      continue;
+    }
+    const generatedOffers = pointOffers
+      .sort()
+      .map((item, index) => {
+        return {
+          id: index + 1,
+          title: item,
+          price: getRandomInt(MIN_PRICE, MAX_PRICE)
+        };
+      });
 
-  return Array(offers.length).fill({}).map((item, index) => {
-    return {
-      title: offers[index],
-      price: getRandomInt(MIN_PRICE, MAX_PRICE),
-    };
-  });
+    offers.set(POINT_TYPES[i], generatedOffers);
+  }
+  return offers;
 };

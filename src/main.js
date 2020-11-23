@@ -5,18 +5,15 @@ import {createSortTemplate} from "./view/sort";
 import {createContentTemplate} from "./view/content";
 import {createPointFormTemplate} from "./view/point-form";
 import {createPointTemplate} from "./view/point";
-import {generatePoint} from "./mock/point";
+import {generatePoints} from "./mock/point";
 import {generateTrip} from "./mock/trip";
-import {point} from "./mock/point";
+import {generateOffers} from "./mock/offer";
+import {defaultPoint} from "./mock/point";
 
 const POINT_COUNT = 15;
 
-const points = Array(POINT_COUNT).fill({})
-  .map(generatePoint)
-  .sort((a, b) => {
-    return a.date.start - b.date.start;
-  });
-
+const offers = generateOffers();
+const points = generatePoints(POINT_COUNT, offers);
 const trip = generateTrip(points);
 
 const render = (container, template, place) => {
@@ -46,12 +43,10 @@ render(tripEventsElement, createContentTemplate(), `beforeend`);
 
 const contentElement = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(contentElement, createPointFormTemplate(point), `beforeend`);
+render(contentElement, createPointFormTemplate(defaultPoint, offers), `beforeend`);
 
-for (let i = 0; i < POINT_COUNT; i++) {
-  // if (i === 0) {
-  //   render(contentElement, createPointFormTemplate(points[i]), `beforeend`);
-  // }
+// render(contentElement, createPointFormTemplate(points[0], offers), `beforeend`);
+for (let i = 1; i < points.length; i++) {
   render(contentElement, createPointTemplate(points[i]), `beforeend`);
 }
 

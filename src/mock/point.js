@@ -2,7 +2,6 @@ import {getRandomInt, shuffle} from "../utils";
 import {cities, descriptions} from "./data";
 import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
 import dayjs from "dayjs";
-import {generateOffers} from "./offer";
 
 const MIN_COUNT_DESCRIPTIONS = 1;
 const MAX_COUNT_DESCRIPTIONS = 5;
@@ -47,17 +46,14 @@ const generateDate = () => {
   };
 };
 
-const generatePointOffers = (type) => {
-  const offers = generateOffers(type);
-  if (offers.length === 0) {
-    return [];
-  }
-  const count = getRandomInt(0, offers.length - 1);
+const generatePointOffers = (offers) => {
+  const clone = offers.slice();
+  const count = getRandomInt(0, clone.length - 1);
 
-  return shuffle(offers).slice(0, count);
+  return shuffle(clone).slice(0, count);
 };
 
-export const point = {
+export const defaultPoint = {
   pointType: DEFAULT_POINT_TYPE,
   destination: ``,
   offers: [],
@@ -70,14 +66,15 @@ export const point = {
   info: null,
 };
 
-export const generatePoint = () => {
+export const generatePoint = (offers) => {
   const pointType = getRandomEventType();
-  const offers = generatePointOffers(pointType);
-
+  const pointOffers = offers.has(pointType)
+    ? generatePointOffers(offers.get(pointType))
+    : [];
   return {
     pointType,
     destination: generateCity(),
-    offers,
+    offers: pointOffers,
     price: getRandomInt(MIN_PRICE, MAX_PRICE),
     date: generateDate(),
     isFavorite: Boolean(getRandomInt(0, 1)),
@@ -86,4 +83,12 @@ export const generatePoint = () => {
       images: generateImages(),
     },
   };
+};
+
+export const generatePoints = (count, offers) => {
+  return Array(count).fill({})
+    .map(() => generatePoint(offers))
+    .sort((a, b) => {
+      return a.date.start - b.date.start;
+    });
 };

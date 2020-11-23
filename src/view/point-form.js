@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
 import {cities} from "../mock/data";
-import {generateOffers} from "../mock/offer";
 
-const createOfferItem = (offer, offerType) => {
-  const {title, price, isAdded} = offer;
-  const typeName = `event-offer-${offerType.toLowerCase()}`;
+const createOfferItem = (offer, point) => {
+  const {title, price} = offer;
+  const {pointType, offers: pointOffers} = point;
+  const typeName = `event-offer-${pointType.toLowerCase()}`;
   const id = `${typeName}-${offer.id}`;
-  const checked = isAdded ? `checked` : ``;
+  const checked = pointOffers.includes(offer) ? `checked` : ``;
   return `
   <div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${typeName}" ${checked}>
@@ -20,8 +20,8 @@ const createOfferItem = (offer, offerType) => {
   `;
 };
 
-const createOffersTemplate = (offers, pointType) => {
-  const items = offers.map((offer) => createOfferItem(offer, pointType)).join(``);
+const createOffersTemplate = (offers, point) => {
+  const items = offers.map((offer) => createOfferItem(offer, point)).join(``);
   return `
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -87,28 +87,11 @@ const createDestinationTemplate = (destination, info) => {
   `;
 };
 
-const getOffers = (pointType, pointOffers) => {
-  const offers = generateOffers(pointType);
-  for (let i = 0; i < offers.length; i++) {
-    offers[i].id = i + 1;
-    offers[i].isAdded = false;
-    for (let j = 0; j < pointOffers.length; j++) {
-      if (offers[i].title === pointOffers[j].title) {
-        offers[i].isAdded = true;
-        break;
-      }
-    }
-  }
-  return offers;
-};
-
-export const createPointFormTemplate = (point) => {
-  const {pointType, date, price, destination, offers: pointOffers, info} = point;
+export const createPointFormTemplate = (point, offers) => {
+  const {pointType, date, price, destination, info} = point;
   const eventTypeBlock = createEventTypeTemplate(pointType);
-  const offers = getOffers(pointType, pointOffers);
-
-  const offersBlock = (offers.length !== 0)
-    ? createOffersTemplate(offers, pointType)
+  const offersBlock = (offers.has(pointType))
+    ? createOffersTemplate(offers.get(pointType), point)
     : ``;
   const destinationInfo = (info !== null)
     ? createDestinationTemplate(destination, info)
