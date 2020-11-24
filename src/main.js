@@ -8,7 +8,7 @@ import {createPointTemplate} from "./view/point";
 import {generatePoints} from "./mock/point";
 import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
-import {defaultPoint} from "./mock/point";
+// import {defaultPoint} from "./mock/point";
 
 const POINT_COUNT = 15;
 
@@ -43,9 +43,9 @@ render(tripEventsElement, createContentTemplate(), `beforeend`);
 
 const contentElement = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(contentElement, createPointFormTemplate(defaultPoint, offers), `beforeend`);
+// render(contentElement, createPointFormTemplate(defaultPoint, offers), `beforeend`);
 
-// render(contentElement, createPointFormTemplate(points[0], offers), `beforeend`);
+render(contentElement, createPointFormTemplate(points[0], offers), `beforeend`);
 for (let i = 1; i < points.length; i++) {
   render(contentElement, createPointTemplate(points[i]), `beforeend`);
 }

@@ -20,7 +20,7 @@ const generateCity = () => {
   return cities[getRandomInt(0, cities.length - 1)];
 };
 
-const getRandomEventType = () => {
+const getRandomPointType = () => {
   return POINT_TYPES[getRandomInt(0, POINT_TYPES.length - 1)];
 };
 
@@ -67,7 +67,7 @@ export const defaultPoint = {
 };
 
 export const generatePoint = (offers) => {
-  const pointType = getRandomEventType();
+  const pointType = getRandomPointType();
   const pointOffers = offers.has(pointType)
     ? generatePointOffers(offers.get(pointType))
     : [];
