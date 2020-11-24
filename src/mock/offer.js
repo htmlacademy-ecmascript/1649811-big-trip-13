@@ -6,32 +6,26 @@ const MIN_PRICE = 5;
 const MAX_PRICE = 100;
 
 export const getOffers = (pointType) => {
-  let pointOffers;
   switch (pointType) {
     case `Sightseeing`:
       return null;
     case `Check-in`:
-      pointOffers = checkInOffers;
-      break;
+      return checkInOffers;
     case `Restaurant`:
-      pointOffers = restaurantOffers;
-      break;
+      return restaurantOffers;
     default:
-      pointOffers = transportOffers;
-      break;
+      return transportOffers;
   }
-
-  return pointOffers;
 };
 
 export const generateOffers = () => {
-  const offers = new Map();
+  const offers = {};
   for (let i = 0; i < POINT_TYPES.length; i++) {
     const pointOffers = getOffers(POINT_TYPES[i]);
     if (!pointOffers) {
       continue;
     }
-    const generatedOffers = pointOffers
+    offers[POINT_TYPES[i]] = pointOffers
       .sort()
       .map((item, index) => {
         return {
@@ -40,8 +34,6 @@ export const generateOffers = () => {
           price: getRandomInt(MIN_PRICE, MAX_PRICE)
         };
       });
-
-    offers.set(POINT_TYPES[i], generatedOffers);
   }
   return offers;
 };

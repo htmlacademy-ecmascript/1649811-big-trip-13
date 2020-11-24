@@ -8,22 +8,16 @@ const defaultTrip = {
 
 const generateTitle = (points) => {
   const length = points.length;
-  let title;
   switch (length) {
     case 1:
-      title = `${points[0].destination}`;
-      break;
+      return `${points[0].destination}`;
     case 2:
-      title = `${points[0].destination} — ${points[1].destination}`;
-      break;
+      return `${points[0].destination} — ${points[1].destination}`;
     case 3:
-      title = `${points[0].destination} — ${points[1].destination} — ${points[2].destination}`;
-      break;
+      return `${points[0].destination} — ${points[1].destination} — ${points[2].destination}`;
     default:
-      title = `${points[0].destination} — ... — ${points[length - 1].destination}`;
-      break;
+      return `${points[0].destination} — ... — ${points[length - 1].destination}`;
   }
-  return title;
 };
 
 const generatePrice = (points) => {

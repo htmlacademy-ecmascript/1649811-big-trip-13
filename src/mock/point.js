@@ -48,7 +48,7 @@ const generateDate = () => {
 
 const generatePointOffers = (offers) => {
   const clone = offers.slice();
-  const count = getRandomInt(0, clone.length - 1);
+  const count = getRandomInt(0, clone.length);
 
   return shuffle(clone).slice(0, count);
 };
@@ -68,8 +68,8 @@ export const defaultPoint = {
 
 export const generatePoint = (offers) => {
   const pointType = getRandomPointType();
-  const pointOffers = offers.has(pointType)
-    ? generatePointOffers(offers.get(pointType))
+  const pointOffers = (pointType in offers)
+    ? generatePointOffers(offers[pointType])
     : [];
   return {
     pointType,

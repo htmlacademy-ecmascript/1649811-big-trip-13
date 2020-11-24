@@ -90,8 +90,8 @@ const createDestinationTemplate = (destination, info) => {
 export const createPointFormTemplate = (point, offers) => {
   const {pointType, date, price, destination, info} = point;
   const eventTypeBlock = createEventTypeTemplate(pointType);
-  const offersBlock = (offers.has(pointType))
-    ? createOffersTemplate(offers.get(pointType), point)
+  const offersBlock = (pointType in offers)
+    ? createOffersTemplate(offers[pointType], point)
     : ``;
   const destinationInfo = (info !== null)
     ? createDestinationTemplate(destination, info)
