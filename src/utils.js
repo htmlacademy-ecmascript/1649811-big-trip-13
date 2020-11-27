@@ -44,7 +44,7 @@ const printTimeUnit = (unit) => {
   return unit > 10 ? unit : `0${unit}`;
 };
 
-export const render = (container, template, place) => {
+export const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
