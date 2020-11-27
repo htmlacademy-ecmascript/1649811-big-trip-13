@@ -27,13 +27,9 @@ const mainTripElement = siteHeaderElement.querySelector(`.trip-main`);
 render(mainTripElement, createTripInfoTemplate(trip), `afterbegin`);
 
 const tripControlsElement = mainTripElement.querySelector(`.trip-main__trip-controls`);
-const menuHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden:first-child`);
 
-render(menuHeaderElement, createMenuTemplate(), `afterend`);
-
-const filterHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden:last-child`);
-
-render(filterHeaderElement, createFiltersTemplate(), `afterend`);
+render(tripControlsElement, createMenuTemplate(), `beforeend`);
+render(tripControlsElement, createFiltersTemplate(), `beforeend`);
 
 const siteMainElement = bodyElement.querySelector(`.page-main`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
