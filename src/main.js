@@ -1,5 +1,5 @@
-import {createTripInfoTemplate} from "./view/trip-info";
-import {createMenuTemplate} from "./view/menu";
+import TripInfo from "./view/trip-info";
+import {createMenuTemplate, Menu} from "./view/menu";
 import {createFiltersTemplate} from "./view/filter";
 import {createSortTemplate} from "./view/sort";
 import {createContentTemplate} from "./view/content";
@@ -9,7 +9,7 @@ import {generatePoints} from "./mock/point";
 import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
-import {render} from "./utils";
+import {render, renderElement, RenderPosition} from "./utils";
 // import {defaultPoint} from "./mock/point";
 
 
@@ -23,13 +23,15 @@ const filters = generateFilters(points);
 const bodyElement = document.querySelector(`.page-body`);
 
 const siteHeaderElement = bodyElement.querySelector(`.page-header`);
+
 const mainTripElement = siteHeaderElement.querySelector(`.trip-main`);
 
-render(mainTripElement, createTripInfoTemplate(trip), `afterbegin`);
+renderElement(mainTripElement, new TripInfo(trip).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripControlsElement = mainTripElement.querySelector(`.trip-main__trip-controls`);
-
-render(tripControlsElement, createMenuTemplate(), `beforeend`);
+const menuHeader = tripControlsElement.querySelector(`h2.visually-hidden`);
+renderElement(menuHeader, new Menu().getElement(), RenderPosition.AFTER);
+// render(tripControlsElement, createMenuTemplate(), `beforeend`);
 render(tripControlsElement, createFiltersTemplate(filters), `beforeend`);
 
 const siteMainElement = bodyElement.querySelector(`.page-main`);

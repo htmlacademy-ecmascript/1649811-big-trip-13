@@ -2,7 +2,9 @@ import dayjs from "dayjs";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  BEFOREEND: `beforeend`,
+  AFTER: `after`,
+  BEFORE: `before`,
 };
 
 export const getRandomInt = (a = 1, b = 0) => {
@@ -54,6 +56,12 @@ export const renderElement = (container, element, place) => {
     case RenderPosition.BEFOREEND:
       container.append(element);
       break;
+    case RenderPosition.AFTER:
+      container.after(element);
+      break;
+    case RenderPosition.BEFORE:
+      container.before(element);
+      break;
   }
 };
 
@@ -61,5 +69,5 @@ export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
 
-  return newElement.firstChild;
+  return newElement.firstElementChild;
 };
