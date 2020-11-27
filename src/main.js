@@ -9,7 +9,9 @@ import {generatePoints} from "./mock/point";
 import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
+import {render} from "./utils";
 // import {defaultPoint} from "./mock/point";
+
 
 const POINT_COUNT = 15;
 
@@ -17,10 +19,6 @@ const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
 const trip = generateTrip(points);
 const filters = generateFilters(points);
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
 
 const bodyElement = document.querySelector(`.page-body`);
 
