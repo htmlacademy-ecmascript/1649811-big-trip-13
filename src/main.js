@@ -32,7 +32,7 @@ const tripControlsElement = mainTripElement.querySelector(`.trip-main__trip-cont
 
 const menuHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden`);
 renderElement(menuHeaderElement, new Menu().getElement(), RenderPosition.AFTER);
-console.log(new Filter(filters).getElement());
+
 const filterHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden:last-child`);
 renderElement(filterHeaderElement, new Filter(filters).getElement(), RenderPosition.AFTER);
 
