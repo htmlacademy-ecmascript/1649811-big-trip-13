@@ -1,7 +1,7 @@
 import TripInfo from "./view/trip-info";
-import {createMenuTemplate, Menu} from "./view/menu";
-import Filter, {createFiltersTemplate} from "./view/filter";
-import {createSortTemplate} from "./view/sort";
+import Menu from "./view/menu";
+import Filter from "./view/filter";
+import Sort from "./view/sort";
 import {createContentTemplate} from "./view/content";
 import {createPointFormTemplate} from "./view/point-form";
 import {createPointTemplate} from "./view/point";
@@ -22,6 +22,7 @@ const filters = generateFilters(points);
 
 const bodyElement = document.querySelector(`.page-body`);
 
+// block header
 const siteHeaderElement = bodyElement.querySelector(`.page-header`);
 
 const mainTripElement = siteHeaderElement.querySelector(`.trip-main`);
@@ -36,10 +37,12 @@ renderElement(menuHeaderElement, new Menu().getElement(), RenderPosition.AFTER);
 const filterHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden:last-child`);
 renderElement(filterHeaderElement, new Filter(filters).getElement(), RenderPosition.AFTER);
 
+// block main
 const siteMainElement = bodyElement.querySelector(`.page-main`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
-
-render(tripEventsElement, createSortTemplate(), `beforeend`);
+// sort
+renderElement(tripEventsElement, new Sort().getElement(), RenderPosition.BEFOREEND);
+// content
 render(tripEventsElement, createContentTemplate(), `beforeend`);
 
 const contentElement = tripEventsElement.querySelector(`.trip-events__list`);
