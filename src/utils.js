@@ -71,3 +71,13 @@ export const createElement = (template) => {
 
   return newElement.firstElementChild;
 };
+
+export const isPointPast = (endDate) => {
+  return dayjs().isAfter(endDate, `date`);
+};
+
+export const isPointFuture = (startDate) => {
+  const currentDate = dayjs();
+  return currentDate.isSame(startDate, `date`)
+    || currentDate.isBefore(startDate, `date`);
+};

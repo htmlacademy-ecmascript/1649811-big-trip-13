@@ -35,7 +35,7 @@ const generateImages = () => {
 };
 
 const generateDate = () => {
-  const daysGap = getRandomInt(0, MAX_DAYS_GAP);
+  const daysGap = getRandomInt(-MAX_DAYS_GAP, MAX_DAYS_GAP);
   const minutesGap = getRandomInt(MIN_MINUTE_GAP, MAX_MINUTE_GAP);
 
   const dateStart = dayjs().add(daysGap, `day`).toDate();

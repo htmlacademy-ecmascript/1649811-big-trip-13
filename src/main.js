@@ -5,13 +5,11 @@ import SortView from "./view/sort";
 import PointListView from "./view/point-list";
 import PointFormView from "./view/point-form";
 import PointView from "./view/point";
-import {generatePoints} from "./mock/point";
+import {defaultPoint, generatePoints} from "./mock/point";
 import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
 import {renderElement, RenderPosition} from "./utils";
-// import {defaultPoint} from "./mock/point";
-
 
 const POINT_COUNT = 20;
 
@@ -19,6 +17,8 @@ const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
 const trip = generateTrip(points);
 const filters = generateFilters(points);
+
+let newPointFormComponent = null;
 
 const bodyElement = document.querySelector(`.page-body`);
 
@@ -43,8 +43,8 @@ const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 
 // point list
-const pointList = new PointListView();
-renderElement(tripEventsElement, pointList.getElement(), RenderPosition.BEFOREEND);
+const pointListComponent = new PointListView();
+renderElement(tripEventsElement, pointListComponent.getElement(), RenderPosition.BEFOREEND);
 
 const renderPoint = (pointListElement, point) => {
   const pointComponent = new PointView(point, offers);
@@ -78,6 +78,27 @@ const renderPoint = (pointListElement, point) => {
 };
 
 for (let i = 0; i < points.length; i++) {
-  renderPoint(pointList.getElement(), points[i]);
+  renderPoint(pointListComponent.getElement(), points[i]);
 }
 
+// add point
+const addPointButton = mainTripElement.querySelector(`.trip-main__event-add-btn`);
+addPointButton.addEventListener(`click`, () => {
+  if (!newPointFormComponent) {
+    newPointFormComponent = new PointFormView(defaultPoint, offers);
+    renderElement(pointListComponent.getElement(), newPointFormComponent.getElement(), RenderPosition.AFTERBEGIN);
+
+    newPointFormComponent.getElement().querySelector(`form`)
+      .addEventListener(`submit`, (evt) => {
+        evt.preventDefault();
+        newPointFormComponent.getElement().remove();
+        newPointFormComponent = null;
+      });
+
+    newPointFormComponent.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, () => {
+        newPointFormComponent.getElement().remove();
+        newPointFormComponent = null;
+      });
+  }
+});
