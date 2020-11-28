@@ -22,7 +22,7 @@ let newPointFormComponent = null;
 
 const bodyElement = document.querySelector(`.page-body`);
 
-// block header
+// ******** block header
 const mainTripElement = bodyElement.querySelector(`.page-header .trip-main`);
 
 renderElement(mainTripElement, new TripInfoView(trip).getElement(), RenderPosition.AFTERBEGIN);
@@ -35,7 +35,7 @@ renderElement(menuHeaderElement, new MenuView().getElement(), RenderPosition.AFT
 const filterHeaderElement = tripControlsElement.querySelector(`h2.visually-hidden:last-child`);
 renderElement(filterHeaderElement, new FilterView(filters).getElement(), RenderPosition.AFTER);
 
-// block main
+// *********** block main
 const siteMainElement = bodyElement.querySelector(`.page-main`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
