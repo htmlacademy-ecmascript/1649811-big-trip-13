@@ -44,31 +44,31 @@ const renderPoint = (pointListContainer, point) => {
     pointListContainer.replaceChild(pointComponent.getElement(), pointFormComponent.getElement());
   };
 
-  const onEscKeyDown = (evt) => {
-    if (evt.key === DEFAULT_HIDE_FORM_KEY || evt.key === DEFAULT_HIDE_FORM_KEY.slice(0, 3)) {
+  const onHideKeyDown = (evt) => {
+    if (evt.code === DEFAULT_HIDE_FORM_KEY) {
       evt.preventDefault();
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      document.removeEventListener(`keydown`, onHideKeyDown);
     }
   };
 
   pointComponent.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, () => {
       replacePointToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
+      document.addEventListener(`keydown`, onHideKeyDown);
     });
 
   pointFormComponent.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, () => {
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      document.removeEventListener(`keydown`, onHideKeyDown);
     });
 
   pointFormComponent.getElement().querySelector(`form`)
     .addEventListener(`submit`, (evt) => {
       evt.preventDefault();
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      document.removeEventListener(`keydown`, onHideKeyDown);
     });
 
   renderElement(pointListContainer, pointComponent.getElement(), RenderPosition.BEFOREEND);
