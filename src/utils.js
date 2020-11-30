@@ -1,5 +1,12 @@
 import dayjs from "dayjs";
 
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTER: `after`,
+  BEFORE: `before`,
+};
+
 export const getRandomInt = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -37,3 +44,40 @@ const printTimeUnit = (unit) => {
   return unit > 10 ? unit : `0${unit}`;
 };
 
+export const renderTemplate = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTER:
+      container.after(element);
+      break;
+    case RenderPosition.BEFORE:
+      container.before(element);
+      break;
+  }
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstElementChild;
+};
+
+export const isPointPast = (endDate) => {
+  return dayjs().isAfter(endDate, `date`);
+};
+
+export const isPointFuture = (startDate) => {
+  const currentDate = dayjs();
+  return currentDate.isSame(startDate, `date`)
+    || currentDate.isBefore(startDate, `date`);
+};
