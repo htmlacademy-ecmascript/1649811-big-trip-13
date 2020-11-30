@@ -11,6 +11,7 @@ import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
 import {renderElement, RenderPosition} from "./utils";
+import {DEFAULT_HIDE_FORM_KEY} from "./constants";
 
 const POINT_COUNT = 20;
 
@@ -44,7 +45,7 @@ const renderPoint = (pointListContainer, point) => {
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (evt.key === DEFAULT_HIDE_FORM_KEY || evt.key === DEFAULT_HIDE_FORM_KEY.slice(0, 3)) {
       evt.preventDefault();
       replaceFormToPoint();
       document.removeEventListener(`keydown`, onEscKeyDown);
