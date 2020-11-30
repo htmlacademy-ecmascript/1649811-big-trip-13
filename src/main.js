@@ -11,7 +11,6 @@ import {generateTrip} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
 import {renderElement, RenderPosition} from "./utils";
-import {DEFAULT_HIDE_FORM_KEY} from "./constants";
 
 const POINT_COUNT = 20;
 
@@ -44,31 +43,31 @@ const renderPoint = (pointListContainer, point) => {
     pointListContainer.replaceChild(pointComponent.getElement(), pointFormComponent.getElement());
   };
 
-  const onHideKeyDown = (evt) => {
-    if (evt.code === DEFAULT_HIDE_FORM_KEY) {
-      evt.preventDefault();
+  const onEscKeyDown = (evt) => {
+    evt.preventDefault();
+    if (evt.key === `Escape` || evt.key === `Esc`) {
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onHideKeyDown);
+      document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
   pointComponent.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, () => {
       replacePointToForm();
-      document.addEventListener(`keydown`, onHideKeyDown);
+      document.addEventListener(`keydown`, onEscKeyDown);
     });
 
   pointFormComponent.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, () => {
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onHideKeyDown);
+      document.removeEventListener(`keydown`, onEscKeyDown);
     });
 
   pointFormComponent.getElement().querySelector(`form`)
     .addEventListener(`submit`, (evt) => {
       evt.preventDefault();
       replaceFormToPoint();
-      document.removeEventListener(`keydown`, onHideKeyDown);
+      document.removeEventListener(`keydown`, onEscKeyDown);
     });
 
   renderElement(pointListContainer, pointComponent.getElement(), RenderPosition.BEFOREEND);

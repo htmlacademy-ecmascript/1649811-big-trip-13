@@ -4,5 +4,3 @@ export const POINT_TYPES = [
 ];
 
 export const DEFAULT_POINT_TYPE = `Flight`;
-
-export const DEFAULT_HIDE_FORM_KEY = `Escape`;
