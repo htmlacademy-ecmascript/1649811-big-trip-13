@@ -12,7 +12,7 @@ import {generateOffers} from "./mock/offer";
 import {generateFilters} from "./mock/filter";
 import {renderElement, RenderPosition} from "./utils";
 
-const POINT_COUNT = 20;
+const POINT_COUNT = 5;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);

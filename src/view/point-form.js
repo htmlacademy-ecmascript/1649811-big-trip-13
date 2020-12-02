@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
 import {cities} from "../mock/data";
-import {createElement} from "../utils";
+import Abstract from "./abstract";
 
 const createOfferItem = (offer, point) => {
   const {title, price} = offer;
@@ -159,8 +159,9 @@ const createPointFormTemplate = (point, offers) => {
   </li>`;
 };
 
-export default class PointForm {
+export default class PointForm extends Abstract {
   constructor(point, offers) {
+    super();
     this._point = point;
     this._offers = offers;
     this._element = null;
@@ -168,17 +169,5 @@ export default class PointForm {
 
   getTemplate() {
     return createPointFormTemplate(this._point, this._offers);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
