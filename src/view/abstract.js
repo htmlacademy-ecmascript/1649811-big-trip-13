@@ -1,15 +1,16 @@
-import {createElement} from "../utils";
+import {createElement} from "../utils/render";
 
 export default class Abstract {
   constructor() {
     if (new.target === this.constructor.name) {
-      throw new Error(`You cannot create an object of an abstract class`);
+      throw new Error(`You cannot create an object of an Abstract class`);
     }
     this._element = null;
+    this._callback = {};
   }
 
   getTemplate() {
-    throw new Error(`Abstract method 'getTemplate' not implemented`);
+    throw new Error(`Abstract method "getTemplate" not implemented`);
   }
 
   getElement() {

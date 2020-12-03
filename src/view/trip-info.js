@@ -20,7 +20,6 @@ const createTripInfoTemplate = (trip) => {
 export default class TripInfo extends Abstract {
   constructor(trip) {
     super();
-    this._element = null;
     this._trip = trip;
   }
 

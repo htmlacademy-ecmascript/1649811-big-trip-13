@@ -25,7 +25,6 @@ const createFiltersTemplate = (filters) => {
 export default class Filter extends Abstract {
   constructor(filters) {
     super();
-    this._element = null;
     this._filters = filters;
   }
 

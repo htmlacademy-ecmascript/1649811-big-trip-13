@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
+import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../constants";
 import {cities} from "../mock/data";
 import Abstract from "./abstract";
 
@@ -160,14 +160,37 @@ const createPointFormTemplate = (point, offers) => {
 };
 
 export default class PointForm extends Abstract {
-  constructor(point, offers) {
+  constructor(point = EMPTY_POINT, offers) {
     super();
     this._point = point;
     this._offers = offers;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formCloseHandler = this._formCloseHandler.bind(this);
   }
 
   getTemplate() {
     return createPointFormTemplate(this._point, this._offers);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  _formCloseHandler() {
+    this._callback.formClose();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setFormCloseHandler(callback) {
+    this._callback.formClose = callback;
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._formCloseHandler);
   }
 }
