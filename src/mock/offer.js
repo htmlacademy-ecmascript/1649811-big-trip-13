@@ -1,6 +1,6 @@
 import {checkInOffers, restaurantOffers, transportOffers} from "./data";
 import {POINT_TYPES} from "../constants";
-import {getRandomInt} from "../utils";
+import {getRandomInt} from "../utils/common";
 
 const MIN_PRICE = 5;
 const MAX_PRICE = 100;
