@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
+import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../constants";
 import {cities} from "../mock/data";
-import {createElement} from "../utils";
+import Abstract from "./abstract";
 
 const createOfferItem = (offer, point) => {
   const {title, price} = offer;
@@ -159,26 +159,38 @@ const createPointFormTemplate = (point, offers) => {
   </li>`;
 };
 
-export default class PointForm {
-  constructor(point, offers) {
+export default class PointForm extends Abstract {
+  constructor(point = EMPTY_POINT, offers) {
+    super();
     this._point = point;
     this._offers = offers;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formCloseHandler = this._formCloseHandler.bind(this);
   }
 
   getTemplate() {
     return createPointFormTemplate(this._point, this._offers);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  _formCloseHandler() {
+    this._callback.formClose();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setFormCloseHandler(callback) {
+    this._callback.formClose = callback;
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._formCloseHandler);
   }
 }

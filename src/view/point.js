@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import {getDuration, createElement} from "../utils";
+import Abstract from "./abstract";
+import {getDuration} from "../utils/point";
 
 const createOfferItem = (offer) => {
   const {title, price} = offer;
@@ -76,28 +77,26 @@ const createPointTemplate = (point) => {
    `;
 };
 
-export default class Point {
-  constructor(point, offers) {
+export default class Point extends Abstract {
+  constructor(point) {
+    super();
     this._point = point;
-    this._offers = offers;
 
-    this._element = null;
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPointTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, this._editClickHandler);
   }
 }
-

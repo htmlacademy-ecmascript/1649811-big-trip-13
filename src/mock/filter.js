@@ -1,4 +1,4 @@
-import {isPointFuture, isPointPast} from "../utils";
+import {isPointFuture, isPointPast} from "../utils/point";
 
 const pointsToFilter = {
   Everything: (points) => points,

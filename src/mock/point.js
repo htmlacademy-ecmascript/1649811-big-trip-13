@@ -1,7 +1,7 @@
-import {getRandomInt, shuffle} from "../utils";
 import {cities, descriptions} from "./data";
-import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../constants";
+import {POINT_TYPES} from "../constants";
 import dayjs from "dayjs";
+import {getRandomInt, shuffle} from "../utils/common";
 
 const MIN_COUNT_DESCRIPTIONS = 1;
 const MAX_COUNT_DESCRIPTIONS = 5;
@@ -16,12 +16,12 @@ const MAX_DAYS_GAP = 10;
 const MIN_MINUTE_GAP = 10;
 const MAX_MINUTE_GAP = 60 * 24 * 3;
 
-const generateCity = () => {
-  return cities[getRandomInt(0, cities.length - 1)];
-};
-
 const getRandomPointType = () => {
   return POINT_TYPES[getRandomInt(0, POINT_TYPES.length - 1)];
+};
+
+const generateCity = () => {
+  return cities[getRandomInt(0, cities.length - 1)];
 };
 
 const generateDescription = () => {
@@ -51,19 +51,6 @@ const generatePointOffers = (offers) => {
   const count = getRandomInt(0, clone.length);
 
   return shuffle(clone).slice(0, count);
-};
-
-export const defaultPoint = {
-  pointType: DEFAULT_POINT_TYPE,
-  destination: ``,
-  offers: [],
-  price: 0,
-  date: {
-    start: null,
-    end: null,
-  },
-  isFavorite: false,
-  info: null,
 };
 
 export const generatePoint = (offers) => {
