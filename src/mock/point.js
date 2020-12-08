@@ -16,6 +16,8 @@ const MAX_DAYS_GAP = 10;
 const MIN_MINUTE_GAP = 10;
 const MAX_MINUTE_GAP = 60 * 24 * 3;
 
+const generateId = () => Date.now() + Math.random().toFixed(3) * 1000;
+
 const getRandomPointType = () => {
   return POINT_TYPES[getRandomInt(0, POINT_TYPES.length - 1)];
 };
@@ -59,6 +61,7 @@ export const generatePoint = (offers) => {
     ? generatePointOffers(offers[pointType])
     : [];
   return {
+    id: generateId(),
     pointType,
     destination: generateCity(),
     offers: pointOffers,

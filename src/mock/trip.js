@@ -31,7 +31,7 @@ const generateDate = (points) => {
   return `${dayjs(start).format(`DD MMM`)} — ${dayjs(end).format(`DD MMM`)}`;
 };
 
-export const generateTrip = (points) => {
+export const generateTripInfo = (points) => {
   if (points.length === 0) {
     return defaultTrip;
   }

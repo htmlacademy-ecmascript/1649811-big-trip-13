@@ -10,3 +10,13 @@ export const shuffle = (someArray) => {
   }
   return someArray;
 };
+export const updatePoint = (points, updatedPoint) => {
+  const index = points.findIndex((point) => point.id === updatedPoint.id);
+
+  if (index === -1) {
+    return points;
+  }
+
+  points[index] = updatedPoint;
+  return points;
+};
