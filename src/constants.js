@@ -17,3 +17,9 @@ export const EMPTY_POINT = {
   isFavorite: false,
   info: null,
 };
+
+export const SortType = {
+  DEFAULT: `sort-day`,
+  PRICE: `sort-price`,
+  TIME: `sort-time`,
+};
