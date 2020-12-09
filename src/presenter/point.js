@@ -55,37 +55,6 @@ export default class Point {
     remove(prevPointEditComponent);
   }
 
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToPoint();
-    }
-  }
-
-  destroy() {
-    remove(this._pointComponent);
-    remove(this._pointEditComponent);
-  }
-
-  _replacePointToForm() {
-    replace(this._pointEditComponent, this._pointComponent);
-    document.addEventListener(`keydown`, this._escKeyDownHandler);
-    this._changeMode();
-    this._mode = Mode.EDITING;
-  }
-
-  _replaceFormToPoint() {
-    replace(this._pointComponent, this._pointEditComponent);
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
-    this._mode = Mode.DEFAULT;
-  }
-
-  _escKeyDownHandler(evt) {
-    evt.preventDefault();
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      this._replaceFormToPoint();
-    }
-  }
-
   _handleEditClick() {
     this._replacePointToForm();
   }
@@ -109,5 +78,36 @@ export default class Point {
             }
         )
     );
+  }
+
+  _replacePointToForm() {
+    replace(this._pointEditComponent, this._pointComponent);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.EDITING;
+  }
+
+  _replaceFormToPoint() {
+    replace(this._pointComponent, this._pointEditComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
+  }
+
+  _escKeyDownHandler(evt) {
+    evt.preventDefault();
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      this._replaceFormToPoint();
+    }
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToPoint();
+    }
+  }
+
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditComponent);
   }
 }
