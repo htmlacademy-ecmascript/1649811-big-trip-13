@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 
 const printTimeUnit = (unit) => {
-  return unit >= 10 ? unit : `0${unit}`;
+  return unit < 10 ? `0${unit}` : unit;
 };
+
 export const getDuration = (startDate, endDate) => {
   const diffMinutes = dayjs(endDate).diff(startDate, `minute`);
 
@@ -22,9 +23,11 @@ export const getDuration = (startDate, endDate) => {
 
   return `${printTimeUnit(days)}D ${printTimeUnit(hours)}H ${printTimeUnit(minutes)}M`;
 };
+
 export const isPointPast = (endDate) => {
   return dayjs().isAfter(endDate, `date`);
 };
+
 export const isPointFuture = (startDate) => {
   const currentDate = dayjs();
   return currentDate.isSame(startDate, `date`)
