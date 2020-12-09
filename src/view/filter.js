@@ -1,4 +1,5 @@
 import Abstract from "./abstract";
+import {FilterType} from "../constants";
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name, points} = filter;
@@ -23,10 +24,10 @@ const createFiltersTemplate = (filters, currentFilter) => {
 };
 
 export default class Filter extends Abstract {
-  constructor(filters, currentFilter) {
+  constructor(filters) {
     super();
     this._filters = filters;
-    this._currentFilter = currentFilter;
+    this._currentFilter = FilterType.DEFAULT;
 
     this._changeFilterHandler = this._changeFilterHandler.bind(this);
   }

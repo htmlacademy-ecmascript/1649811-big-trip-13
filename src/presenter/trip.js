@@ -3,7 +3,6 @@ import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import {RenderPosition, render} from "../utils/render";
-import {updatePoint} from "../utils/common";
 import TripInfoPresenter from "./trip-info";
 import {FilterType} from "../constants";
 import {createFilters} from "../utils/point";
@@ -22,7 +21,7 @@ export default class Trip {
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
-    this._handlePointChange = this._handleFilterChange.bind(this);
+    this._handlePointChange = this._handlePointChange.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
   }
 
@@ -31,7 +30,7 @@ export default class Trip {
     this._sourcedPoints = points;
     this._offers = offers;
     this._tripInfo = tripInfo;
-    this._filters = createFilters(this._points);
+    this._filters = createFilters(points);
 
 
     this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
@@ -44,7 +43,6 @@ export default class Trip {
     const currentFilter = this._filters.find((filter) => filter.name === filterName);
     this._points = currentFilter.points;
 
-    ;
     this._clearPointList();
     this._renderPointList();
   }
@@ -63,7 +61,7 @@ export default class Trip {
   }
 
   _handlePointChange(updatedPoint) {
-    this._points = updatePoint(this._points, updatedPoint);
+    this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
   }
 
@@ -101,5 +99,19 @@ export default class Trip {
 
     this._renderPointList();
   }
-}
 
+  _updatePoint(updatedPoint) {
+    // обновить this точку
+    let index = this._points.findIndex((point) => point.id === updatedPoint.id);
+    if (index !== -1) {
+      this._points[index] = updatedPoint;
+    }
+
+    // обновить точку в моках
+    index = this._sourcedPoints.findIndex((point) => point.id === updatedPoint.id);
+    if (index !== -1) {
+      this._sourcedPoints[index] = updatedPoint;
+      this._filters = createFilters(this._sourcedPoints);
+    }
+  }
+}
