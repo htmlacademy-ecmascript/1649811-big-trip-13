@@ -61,10 +61,10 @@ export default class Point {
     }
   }
 
-  // destroy() {
-  //   remove(this._pointComponent);
-  //   remove(this._pointEditComponent);
-  // }
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditComponent);
+  }
 
   _replacePointToForm() {
     replace(this._pointEditComponent, this._pointComponent);

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {FilterType} from "../constants";
 
 const printTimeUnit = (unit) => {
   return unit < 10 ? `0${unit}` : unit;
@@ -32,4 +33,19 @@ export const isPointFuture = (startDate) => {
   const currentDate = dayjs();
   return currentDate.isSame(startDate, `date`)
     || currentDate.isBefore(startDate, `date`);
+};
+
+const pointsToFilter = {
+  [FilterType.DEFAULT]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.date.start)),
+  [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point.date.end)),
+};
+
+export const createFilters = (points) => {
+  return Object.entries(pointsToFilter).map(([filterName, filterPoints]) => {
+    return {
+      name: filterName,
+      points: filterPoints(points),
+    };
+  });
 };

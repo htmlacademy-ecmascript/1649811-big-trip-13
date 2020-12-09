@@ -1,14 +1,20 @@
 import SortView from "../view/sort";
 import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
-import PointPresenter from "../presenter/point";
+import PointPresenter from "./point";
 import {RenderPosition, render} from "../utils/render";
 import {updatePoint} from "../utils/common";
+import TripInfoPresenter from "./trip-info";
+import {FilterType} from "../constants";
+import {createFilters} from "../utils/point";
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripInfoContainer, tripContainer) {
+    this._tripInfoContainer = tripInfoContainer;
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
+
+    this._currentFilter = FilterType.DEFAULT;
 
     this._noPointComponent = new NoPointView();
     this._pointListComponent = new PointListView();
@@ -16,13 +22,38 @@ export default class Trip {
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handlePointChange = this._handleFilterChange.bind(this);
+    this._handleFilterChange = this._handleFilterChange.bind(this);
   }
 
-  init(points, offers) {
+  init(points, offers, tripInfo) {
     this._points = points.slice();
+    this._sourcedPoints = points;
     this._offers = offers;
+    this._tripInfo = tripInfo;
+    this._filters = createFilters(this._points);
 
+
+    this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
+
+    this._renderTripInfo();
     this._renderTrip();
+  }
+
+  _handleFilterChange(filterName) {
+    const currentFilter = this._filters.find((filter) => filter.name === filterName);
+    this._points = currentFilter.points;
+
+    ;
+    this._clearPointList();
+    this._renderPointList();
+  }
+
+  _clearPointList() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._pointPresenter = {};
   }
 
   _handleModeChange() {
@@ -51,13 +82,14 @@ export default class Trip {
   _renderNoPoints() {
     render(this._tripContainer, this._noPointComponent, RenderPosition.BEFOREEND);
   }
+
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
-  // _renderFilter() {
-  //
-  // }
+  _renderTripInfo() {
+    this._tripInfoPresenter.init(this._tripInfo, this._filters, this._currentFilter);
+  }
 
   _renderTrip() {
     if (this._points.length === 0) {
