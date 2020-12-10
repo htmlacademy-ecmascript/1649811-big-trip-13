@@ -3,9 +3,13 @@ import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import {RenderPosition, render} from "../utils/render";
+
 import TripInfoPresenter from "./trip-info";
-import {FilterType} from "../constants";
+import {FilterType, SortType} from "../constants";
 import {createFilters} from "../utils/point";
+
+import {sortByPrice, sortByTime} from "../utils/point";
+
 
 export default class Trip {
   constructor(tripInfoContainer, tripContainer) {
@@ -13,6 +17,7 @@ export default class Trip {
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
 
+    this._currentSortType = SortType.DEFAULT;
     this._currentFilterType = FilterType.DEFAULT;
 
     this._noPointComponent = new NoPointView();
@@ -20,24 +25,25 @@ export default class Trip {
     this._sortComponent = new SortView();
 
     this._handlePointChange = this._handlePointChange.bind(this);
-    this._handleModeChange = this._handleModeChange.bind(this);
-    this._handlePointChange = this._handlePointChange.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
   }
 
   init(points, offers, tripInfo) {
     this._points = points.slice();
     this._sourcedPoints = points;
     this._offers = offers;
+
     this._tripInfo = tripInfo;
     this._filters = createFilters(points);
-
 
     this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
 
     this._renderTripInfo();
     this._renderTrip();
   }
+
 
   _handleFilterChange(filterName) {
     if (this._currentFilterType === filterName) {
@@ -47,6 +53,31 @@ export default class Trip {
     const currentFilter = this._filters.find((filter) => filter.name === filterName);
     this._points = currentFilter.points;
 
+    this._clearPointList();
+    this._renderPointList();
+  }
+
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.PRICE:
+        this._points.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this._points.sort(sortByTime);
+        break;
+      default:
+        this._points = this._sourcedPoints.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortPoints(sortType);
     this._clearPointList();
     this._renderPointList();
   }
@@ -87,11 +118,14 @@ export default class Trip {
 
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
+
 
   _renderTripInfo() {
     this._tripInfoPresenter.init(this._tripInfo, this._filters, this._currentFilterType);
   }
+
 
   _renderTrip() {
     if (this._points.length === 0) {

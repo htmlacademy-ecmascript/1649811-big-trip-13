@@ -1,4 +1,5 @@
 import Abstract from "./abstract";
+import {SortType} from "../constants";
 
 const createSortTemplate = () => {
   return `
@@ -32,7 +33,29 @@ const createSortTemplate = () => {
 };
 
 export default class Sort extends Abstract {
+  constructor() {
+    super();
+
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+  }
+
   getTemplate() {
     return createSortTemplate();
+  }
+
+  _sortTypeChangeHandler(evt) {
+    evt.preventDefault();
+
+    const target = evt.target.closest(`input`);
+    if (target === null) {
+      return;
+    }
+
+    this._callback.sortTypeChange(target.value);
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener(`change`, this._sortTypeChangeHandler);
   }
 }

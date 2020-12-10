@@ -35,6 +35,7 @@ export const isPointFuture = (startDate) => {
     || currentDate.isBefore(startDate, `date`);
 };
 
+
 const pointsToFilter = {
   [FilterType.DEFAULT]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.date.start)),
@@ -48,4 +49,15 @@ export const createFilters = (points) => {
       points: filterPoints(points),
     };
   });
+};
+
+export const sortByPrice = (pointA, pointB) => {
+  return pointA.price > pointB.price ? -1 : 1;
+};
+
+export const sortByTime = (pointA, pointB) => {
+  const durationPointA = pointA.date.end - pointA.date.start;
+  const durationPointB = pointB.date.end - pointB.date.start;
+
+  return durationPointA > durationPointB ? -1 : 1;
 };

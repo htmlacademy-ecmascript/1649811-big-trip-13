@@ -18,8 +18,15 @@ export const EMPTY_POINT = {
   info: null,
 };
 
+
 export const FilterType = {
   DEFAULT: `Everything`,
   FUTURE: `Future`,
   PAST: `Past`
+};
+
+export const SortType = {
+  DEFAULT: `sort-day`,
+  PRICE: `sort-price`,
+  TIME: `sort-time`
 };
