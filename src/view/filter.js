@@ -6,7 +6,7 @@ const createFilterItemTemplate = (filter, isChecked) => {
   return `
   <div class="trip-filters__filter">
     <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
-    <label class="trip-filters__filter-label" for="filter-${name}" data-filter="${name}">${name} ${points.length}</label>
+    <label class="trip-filters__filter-label" for="filter-${name}" data-filter-type="${name}">${name} ${points.length}</label>
   </div>
   `;
 };
@@ -37,7 +37,6 @@ export default class Filter extends Abstract {
   }
 
   _changeFilterHandler(evt) {
-    evt.preventDefault();
     const target = evt.target.closest(`label`);
     if (target === null) {
       return;
@@ -49,15 +48,14 @@ export default class Filter extends Abstract {
       element.checked = element.id === inputId;
     }
 
-    this._currentFilter = target.dataset.filter;
-    this._callback.changeFilterEvent(target.dataset.filter);
+    this._currentFilter = target.dataset.filterType;
+    this._callback.filterTypeChange(target.dataset.filterType);
   }
 
-  setChangeHandler(callback) {
-    this._callback.changeFilterEvent = callback;
+  setChangeFilterHandler(callback) {
+    this._callback.filterTypeChange = callback;
 
     this.getElement()
       .addEventListener(`click`, this._changeFilterHandler);
-
   }
 }

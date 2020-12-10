@@ -2,6 +2,7 @@ import {cities, descriptions} from "./data";
 import {POINT_TYPES} from "../constants";
 import dayjs from "dayjs";
 import {getRandomInt, shuffle} from "../utils/common";
+import {sortByDate} from "../utils/point";
 
 const MIN_COUNT_DESCRIPTIONS = 1;
 const MAX_COUNT_DESCRIPTIONS = 5;
@@ -78,7 +79,5 @@ export const generatePoint = (offers) => {
 export const generatePoints = (count, offers) => {
   return Array(count).fill({})
     .map(() => generatePoint(offers))
-    .sort((a, b) => {
-      return a.date.start - b.date.start;
-    });
+    .sort(sortByDate);
 };

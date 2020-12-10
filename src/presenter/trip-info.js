@@ -34,7 +34,7 @@ export default class TripInfo {
   _renderFilter() {
     const filterHeaderElement = this._tripInfoContainer.querySelector(`h2.visually-hidden:last-child`);
     render(filterHeaderElement, this._filterComponent, RenderPosition.AFTER);
-    this._filterComponent.setChangeHandler(this._changeFilterHadler);
+    this._filterComponent.setChangeFilterHandler(this._changeFilterHadler);
   }
 
 }
