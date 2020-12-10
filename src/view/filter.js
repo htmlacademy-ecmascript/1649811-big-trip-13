@@ -24,19 +24,19 @@ const createFiltersTemplate = (filters, currentFilter) => {
 };
 
 export default class Filter extends Abstract {
-  constructor(filters) {
+  constructor(filters, currentFilter = null) {
     super();
     this._filters = filters;
-    this._currentFilter = FilterType.DEFAULT;
+    this._currentFilter = currentFilter ? currentFilter : FilterType.DEFAULT;
 
-    this._changeFilterHandler = this._changeFilterHandler.bind(this);
+    this._handleFilterChange = this._handleFilterChange.bind(this);
   }
 
   getTemplate() {
     return createFiltersTemplate(this._filters, this._currentFilter);
   }
 
-  _changeFilterHandler(evt) {
+  _handleFilterChange(evt) {
     const target = evt.target.closest(`label`);
     if (target === null) {
       return;
@@ -56,6 +56,6 @@ export default class Filter extends Abstract {
     this._callback.filterTypeChange = callback;
 
     this.getElement()
-      .addEventListener(`click`, this._changeFilterHandler);
+      .addEventListener(`click`, this._handleFilterChange);
   }
 }

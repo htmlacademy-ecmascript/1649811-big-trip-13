@@ -39,34 +39,26 @@ export default class Trip {
     this._renderTrip();
   }
 
+  _handleModeChange() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._updatePoint(updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
+  }
 
   _handleFilterChange(filterType) {
     if (this._currentFilterType === filterType) {
       return;
     }
 
-    this._currentFilterType = filterType;
-    const currentFilter = this._filters.find((filter) => filter.name === filterType);
-    this._points = currentFilter.points;
-
+    this._filterPoints(filterType);
     this._sortPoints(this._currentSortType);
     this._clearPointList();
     this._renderPointList();
-  }
-
-  _sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.PRICE:
-        this._points.sort(sortByPrice);
-        break;
-      case SortType.TIME:
-        this._points.sort(sortByTime);
-        break;
-      default:
-        this._points.sort(sortByDate);
-    }
-
-    this._currentSortType = sortType;
   }
 
   _handleSortTypeChange(sortType) {
@@ -77,25 +69,6 @@ export default class Trip {
     this._sortPoints(sortType);
     this._clearPointList();
     this._renderPointList();
-  }
-
-  _clearPointList() {
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.destroy());
-
-    this._pointPresenter = {};
-  }
-
-  _handleModeChange() {
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.resetView());
-  }
-
-  _handlePointChange(updatedPoint) {
-    this._updatePoint(updatedPoint);
-    this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
   }
 
   _renderPoint(point) {
@@ -134,6 +107,35 @@ export default class Trip {
     this._renderSort();
 
     this._renderPointList();
+  }
+
+  _filterPoints(filterType) {
+    this._currentFilterType = filterType;
+    const currentFilter = this._filters.find((filter) => filter.name === filterType);
+    this._points = currentFilter.points;
+  }
+
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.PRICE:
+        this._points.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this._points.sort(sortByTime);
+        break;
+      default:
+        this._points.sort(sortByDate);
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _clearPointList() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.destroy());
+
+    this._pointPresenter = {};
   }
 
   _updatePoint(updatedPoint) {

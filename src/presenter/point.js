@@ -35,7 +35,6 @@ export default class Point {
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setFormCloseHandler(this._handleCloseForm);
 
@@ -54,6 +53,31 @@ export default class Point {
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
+  }
+
+  _handleEditClick() {
+    this._replacePointToForm();
+  }
+
+  _handleFormSubmit() {
+    // this._changeData(this._point);
+    this._replaceFormToPoint();
+  }
+
+  _handleCloseForm() {
+    this._replaceFormToPoint();
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._point,
+            {
+              isFavorite: !this._point.isFavorite
+            }
+        )
+    );
   }
 
   resetView() {
@@ -87,28 +111,5 @@ export default class Point {
     }
   }
 
-  _handleEditClick() {
-    this._replacePointToForm();
-  }
 
-  _handleFormSubmit() {
-    // this._changeData(this._point);
-    this._replaceFormToPoint();
-  }
-
-  _handleCloseForm() {
-    this._replaceFormToPoint();
-  }
-
-  _handleFavoriteClick() {
-    this._changeData(
-        Object.assign(
-            {},
-            this._point,
-            {
-              isFavorite: !this._point.isFavorite
-            }
-        )
-    );
-  }
 }

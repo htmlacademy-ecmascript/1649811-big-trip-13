@@ -6,15 +6,18 @@ export const RenderPosition = {
   AFTER: `after`,
   BEFORE: `before`,
 };
+
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
 
   return newElement.firstElementChild;
 };
+
 export const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
+
 export const render = (container, element, place) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
@@ -38,6 +41,7 @@ export const render = (container, element, place) => {
       break;
   }
 };
+
 export const replace = (newChild, oldChild) => {
   if (newChild instanceof AbstractView) {
     newChild = newChild.getElement();
@@ -55,6 +59,7 @@ export const replace = (newChild, oldChild) => {
 
   parent.replaceChild(newChild, oldChild);
 };
+
 export const remove = (component) => {
   if (!(component instanceof AbstractView)) {
     throw new Error(`Can remove only components`);
