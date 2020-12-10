@@ -17,3 +17,9 @@ export const EMPTY_POINT = {
   isFavorite: false,
   info: null,
 };
+
+export const FilterType = {
+  DEFAULT: `Everything`,
+  FUTURE: `Future`,
+  PAST: `Past`
+};
