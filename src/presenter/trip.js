@@ -13,7 +13,7 @@ export default class Trip {
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
 
-    this._currentFilter = FilterType.DEFAULT;
+    this._currentFilterType = FilterType.DEFAULT;
 
     this._noPointComponent = new NoPointView();
     this._pointListComponent = new PointListView();
@@ -40,6 +40,10 @@ export default class Trip {
   }
 
   _handleFilterChange(filterName) {
+    if (this._currentFilterType === filterName) {
+      return;
+    }
+    this._currentFilterType = filterName;
     const currentFilter = this._filters.find((filter) => filter.name === filterName);
     this._points = currentFilter.points;
 
@@ -86,7 +90,7 @@ export default class Trip {
   }
 
   _renderTripInfo() {
-    this._tripInfoPresenter.init(this._tripInfo, this._filters, this._currentFilter);
+    this._tripInfoPresenter.init(this._tripInfo, this._filters, this._currentFilterType);
   }
 
   _renderTrip() {
