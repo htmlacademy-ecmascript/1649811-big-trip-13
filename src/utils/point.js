@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {FilterType} from "../constants";
 
 const printTimeUnit = (unit) => {
-  return unit < 10 ? `0${unit}` : unit;
+  return `${unit}`.padStart(2, `0`);
 };
 
 export const getDuration = (startDate, endDate) => {
@@ -34,7 +34,6 @@ export const isPointFuture = (startDate) => {
   return currentDate.isSame(startDate, `date`)
     || currentDate.isBefore(startDate, `date`);
 };
-
 
 export const pointsToFilter = {
   [FilterType.DEFAULT]: (points) => points,

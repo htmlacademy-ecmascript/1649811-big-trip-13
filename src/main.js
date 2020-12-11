@@ -12,6 +12,8 @@ const points = generatePoints(POINT_COUNT, offers);
 const tripInfo = generateTripInfo(points);
 // const filters = generateFilters(points);
 
+window.__points__ = points;
+
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
 const tripPointsElement = bodyElement.querySelector(`.page-main section.trip-events`);
