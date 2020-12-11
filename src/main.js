@@ -4,7 +4,7 @@ import {generateOffers} from "./mock/offer";
 
 import TripPresenter from "./presenter/trip";
 
-const POINT_COUNT = 5;
+const POINT_COUNT = 15;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
