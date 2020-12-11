@@ -7,7 +7,6 @@ import {FilterType, SortType} from "../constants";
 import {RenderPosition, render} from "../utils/render";
 import {createFilters, sortByDate, sortByPrice, sortByTime} from "../utils/point";
 
-
 export default class Trip {
   constructor(tripInfoContainer, tripContainer) {
     this._tripInfoContainer = tripInfoContainer;
@@ -35,8 +34,16 @@ export default class Trip {
     this._tripInfo = tripInfo;
     this._filters = createFilters(points);
 
+    this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
+
     this._renderTripInfo();
     this._renderTrip();
+  }
+
+
+  _handlePointChange(updatedPoint) {
+    this._updatePoint(updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
   }
 
   _handleModeChange() {
@@ -45,15 +52,14 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handlePointChange(updatedPoint) {
-    this._updatePoint(updatedPoint);
-    this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
-  }
 
   _handleFilterChange(filterType) {
     if (this._currentFilterType === filterType) {
       return;
     }
+
+    const currentFilter = this._filters.find((filter) => filter.name === filterType);
+    this._points = currentFilter.points;
 
     this._filterPoints(filterType);
     this._sortPoints(this._currentSortType);

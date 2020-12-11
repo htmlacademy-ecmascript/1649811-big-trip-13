@@ -5,7 +5,7 @@ import {generateOffers} from "./mock/offer";
 
 import TripPresenter from "./presenter/trip";
 
-const POINT_COUNT = 5;
+const POINT_COUNT = 15;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
@@ -30,9 +30,6 @@ const tripPointsElement = bodyElement.querySelector(`.page-main section.trip-eve
 // };
 
 // renderTripMainBlock(mainTripElement, tripInfo, filters);
-
-// const tripInfoPresenter = new TripInfoPresenter(mainTripElement);
-// tripInfoPresenter.init(tripInfo, filters);
 
 const trip = new TripPresenter(tripInfoElement, tripPointsElement);
 trip.init(points, offers, tripInfo);

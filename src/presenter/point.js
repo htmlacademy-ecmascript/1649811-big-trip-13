@@ -80,17 +80,6 @@ export default class Point {
     );
   }
 
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToPoint();
-    }
-  }
-
-  destroy() {
-    remove(this._pointComponent);
-    remove(this._pointEditComponent);
-  }
-
   _replacePointToForm() {
     replace(this._pointEditComponent, this._pointComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
@@ -111,5 +100,15 @@ export default class Point {
     }
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToPoint();
+    }
+  }
+
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditComponent);
+  }
 
 }
