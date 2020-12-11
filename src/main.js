@@ -1,18 +1,14 @@
 import {generatePoints} from "./mock/point";
 import {generateTripInfo} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
-// import {generateFilters} from "./mock/filter";
 
 import TripPresenter from "./presenter/trip";
 
-const POINT_COUNT = 15;
+const POINT_COUNT = 5;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
 const tripInfo = generateTripInfo(points);
-// const filters = generateFilters(points);
-
-window.__points__ = points;
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
