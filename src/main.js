@@ -1,10 +1,9 @@
 import {generatePoints} from "./mock/point";
 import {generateTripInfo} from "./mock/trip";
 import {generateOffers} from "./mock/offer";
-
 import TripPresenter from "./presenter/trip";
 
-const POINT_COUNT = 15;
+const POINT_COUNT = 5;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);

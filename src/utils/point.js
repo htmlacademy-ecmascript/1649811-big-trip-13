@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {FilterType} from "../constants";
+import {FilterType} from "../const";
 
 const printTimeUnit = (unit) => {
   return `${unit}`.padStart(2, `0`);
@@ -26,13 +26,13 @@ export const getDuration = (startDate, endDate) => {
 };
 
 export const isPointPast = (endDate) => {
-  return dayjs().isAfter(endDate, `date`);
+  return dayjs().isAfter(endDate);
 };
 
 export const isPointFuture = (startDate) => {
   const currentDate = dayjs();
-  return currentDate.isSame(startDate, `date`)
-    || currentDate.isBefore(startDate, `date`);
+  return currentDate.isSame(startDate)
+    || currentDate.isBefore(startDate);
 };
 
 export const pointsToFilter = {

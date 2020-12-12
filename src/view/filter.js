@@ -1,5 +1,5 @@
 import Abstract from "./abstract";
-import {FilterType} from "../constants";
+import {FilterType} from "../const";
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name, points} = filter;

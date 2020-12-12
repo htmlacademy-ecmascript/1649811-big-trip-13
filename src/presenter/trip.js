@@ -3,7 +3,7 @@ import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import TripInfoPresenter from "./trip-info";
-import {FilterType, SortType} from "../constants";
+import {FilterType, SortType} from "../const";
 import {RenderPosition, render} from "../utils/render";
 import {createFilters, sortByDate, sortByPrice, sortByTime} from "../utils/point";
 
@@ -44,6 +44,12 @@ export default class Trip {
   _handlePointChange(updatedPoint) {
     this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
+
+    // this._filters = createFilters(this._points);
+    this._sortPoints(this._currentSortType);
+    this._filterPoints(this._currentFilterType);
+    this._clearPointList();
+    this._renderPointList();
   }
 
   _handleModeChange() {
@@ -57,9 +63,6 @@ export default class Trip {
     if (this._currentFilterType === filterType) {
       return;
     }
-
-    const currentFilter = this._filters.find((filter) => filter.name === filterType);
-    this._points = currentFilter.points;
 
     this._filterPoints(filterType);
     this._sortPoints(this._currentSortType);

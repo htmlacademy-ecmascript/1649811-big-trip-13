@@ -1,5 +1,5 @@
 import Abstract from "./abstract";
-import {SortType} from "../constants";
+import {SortType} from "../const";
 
 const createSortTemplate = () => {
   return `

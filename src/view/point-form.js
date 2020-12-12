@@ -1,18 +1,20 @@
 import dayjs from "dayjs";
-import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../constants";
-import {cities} from "../mock/data";
-import Abstract from "./abstract";
+import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../const";
+import Smart from "./smart";
+import {generateDestination} from "../mock/destination";
+import {parseDate} from "../utils/common";
 
-const createOfferItem = (offer, point) => {
-  const {title, price} = offer;
-  const {pointType, offers: pointOffers} = point;
+const destinations = generateDestination();
+
+const createOfferItem = (offer, offers, pointType) => {
+  const {title, price, id: offerId} = offer;
   const typeName = `event-offer-${pointType.toLowerCase()}`;
-  const id = `${typeName}-${offer.id}`;
-  const checked = pointOffers.includes(offer) ? `checked` : ``;
+  const id = `${typeName}-${offerId}`;
+  const checked = offers.includes(offer) ? `checked` : ``;
   return `
   <div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${typeName}" ${checked}>
-    <label class="event__offer-label" for="${id}">
+    <label class="event__offer-label" for="${id}" data-offer-id="${offerId}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -21,8 +23,9 @@ const createOfferItem = (offer, point) => {
   `;
 };
 
-const createOffersTemplate = (offers, point) => {
-  const items = offers.map((offer) => createOfferItem(offer, point)).join(``);
+const createOffersTemplate = (data) => {
+  const {availableOffers, offers, pointType} = data;
+  const items = availableOffers.map((offer) => createOfferItem(offer, offers, pointType)).join(``);
   return `
   <section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -38,8 +41,8 @@ const createEventItem = (eventType, pointType) => {
   const checked = (eventType === pointType) ? `checked` : ``;
   return `
   <div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checked}>
-    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${eventType}</label>
+    <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${checked}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}">${eventType}</label>
   </div>
   `;
 };
@@ -78,7 +81,7 @@ const createDestinationImagesTemplate = (images) => {
 
 const createDestinationTemplate = (destination, info) => {
   const {description, images} = info;
-  const imageTemplate = (images.length !== 0) ? createDestinationImagesTemplate(images) : ``;
+  const imageTemplate = (images.length > 0) ? createDestinationImagesTemplate(images) : ``;
   return `
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">${destination}</h3>
@@ -88,22 +91,19 @@ const createDestinationTemplate = (destination, info) => {
   `;
 };
 
-const createPointFormTemplate = (point, offers) => {
-  const {pointType, date, price, destination, info} = point;
+const createPointFormTemplate = (data) => {
+  const {pointType, price, destination, info, availableOffers} = data;
+  const {start: startDate, end: endDate} = data.date;
   const eventTypeBlock = createEventTypeTemplate(pointType);
-  const offersBlock = (pointType in offers)
-    ? createOffersTemplate(offers[pointType], point)
+  const offersBlock = availableOffers
+    ? createOffersTemplate(data)
     : ``;
-  const destinationInfo = (info !== null)
+  const destinationInfo = info
     ? createDestinationTemplate(destination, info)
     : ``;
-  const citiesList = cities.map((city) => `<option value="${city}"></option>`).join(``);
-  const startDate = (date.start !== null)
-    ? dayjs(date.start).format(`DD/MM/YY HH:mm`)
-    : ``;
-  const endDate = (date.end !== null)
-    ? dayjs(date.end).format(`DD/MM/YY HH:mm`)
-    : ``;
+  const destinationList = Object.keys(destinations)
+    .map((city) => `<option value="${city}"></option>`).join(``);
+
   return `
   <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -120,7 +120,7 @@ const createPointFormTemplate = (point, offers) => {
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
 
-            ${citiesList}
+            ${destinationList}
 
           </datalist>
         </div>
@@ -159,23 +159,34 @@ const createPointFormTemplate = (point, offers) => {
   </li>`;
 };
 
-export default class PointForm extends Abstract {
+export default class PointForm extends Smart {
   constructor(point = EMPTY_POINT, offers) {
     super();
-    this._point = point;
+
     this._offers = offers;
+    this._point = point;
+    this._data = this._parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formCloseHandler = this._formCloseHandler.bind(this);
+    this._pointTypeToggleHandler = this._pointTypeToggleHandler.bind(this);
+    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createPointFormTemplate(this._point, this._offers);
+    return createPointFormTemplate(this._data);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+
+    const data = this._parseDataToPoint(this._data);
+    this._callback.formSubmit(data);
   }
 
   _formCloseHandler() {
@@ -192,5 +203,134 @@ export default class PointForm extends Abstract {
     this._callback.formClose = callback;
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, this._formCloseHandler);
+  }
+
+  _parsePointToData(point) {
+    const availableOffers = (point.pointType in this._offers)
+      ? this._offers[point.pointType]
+      : null;
+
+    const date = {
+      start: point.date.start !== null
+        ? dayjs(point.date.start).format(`DD/MM/YY HH:mm`)
+        : ``,
+      end: point.date.end !== null
+        ? dayjs(point.date.end).format(`DD/MM/YY HH:mm`)
+        : ``,
+    };
+
+    return Object.assign(
+        {},
+        point,
+        {
+          date,
+          availableOffers,
+        }
+    );
+
+  }
+
+  _parseDataToPoint(data) {
+    const date = {
+      start: parseDate(data.date.start),
+      end: parseDate(data.date.end),
+    };
+
+
+    data = Object.assign({}, data, {date});
+
+    delete data.availableOffers;
+
+    return data;
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormCloseHandler(this._callback.formClose);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector(`.event__type-wrapper`)
+      .addEventListener(`click`, this._pointTypeToggleHandler);
+
+    this.getElement().querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationChangeHandler);
+
+    Object.values(this.getElement().querySelectorAll(`.event__input--time`))
+      .forEach((element) => element.addEventListener(`change`, this._dateChangeHandler)
+      );
+
+    if (this._data.availableOffers) {
+      this.getElement().querySelector(`.event__available-offers`)
+        .addEventListener(`click`, this._offerChangeHandler);
+    }
+
+    this.getElement().querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
+  }
+
+  _offerChangeHandler(evt) {
+    const target = evt.target.closest(`label.event__offer-label`);
+    if (!target) {
+      return;
+    }
+
+    const id = +target.dataset.offerId;
+    const offers = this._data.offers.slice();
+    const index = offers.findIndex((item) => item.id === id);
+
+    if (index !== -1) {
+      offers.splice(index, 1);
+    } else {
+      const offer = this._data.availableOffers
+        .find((item) => item.id === +target.dataset.offerId);
+
+      offers.push(offer);
+    }
+
+    this.updateData({offers}, true);
+  }
+
+  _pointTypeToggleHandler(evt) {
+    const target = evt.target.closest(`label.event__type-label`);
+    if (!target) {
+      return;
+    }
+
+    const pointType = target.textContent;
+
+    const availableOffers = pointType in this._offers
+      ? this._offers[pointType]
+      : null;
+
+    this.updateData({pointType, availableOffers, offers: []});
+  }
+
+  _destinationChangeHandler(evt) {
+    let city = evt.target.value;
+
+    const update = {
+      destination: city ? city : ``,
+      info: city ? destinations[city].info : null,
+    };
+    this.updateData(update);
+  }
+
+  _dateChangeHandler(evt) {
+    const date = Object.assign({}, this._data.date);
+
+    if (evt.target.name === `event-start-time`) {
+      date.start = evt.target.value;
+    } else {
+      date.end = evt.target.value;
+    }
+
+    this.updateData({date}, true);
+  }
+
+  _priceChangeHandler(evt) {
+    const price = evt.target.value;
+    this.updateData({price}, true);
   }
 }

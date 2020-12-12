@@ -1,5 +1,5 @@
 import {cities, descriptions} from "./data";
-import {POINT_TYPES} from "../constants";
+import {POINT_TYPES} from "../const";
 import dayjs from "dayjs";
 import {getRandomInt, shuffle} from "../utils/common";
 import {sortByDate} from "../utils/point";
@@ -7,7 +7,7 @@ import {sortByDate} from "../utils/point";
 const MIN_COUNT_DESCRIPTIONS = 1;
 const MAX_COUNT_DESCRIPTIONS = 5;
 
-const MIN_COUNT_PHOTOS = 1;
+const MIN_COUNT_PHOTOS = 0;
 const MAX_COUNT_PHOTOS = 5;
 
 const MIN_PRICE = 5;
@@ -34,21 +34,25 @@ const generateCity = () => {
   return cities[getRandomInt(0, cities.length - 1)];
 };
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const count = getRandomInt(MIN_COUNT_DESCRIPTIONS, MAX_COUNT_DESCRIPTIONS);
   return shuffle(descriptions).slice(0, count).join(` `).trim();
 };
 
-const generateImages = () => {
+export const generateImages = () => {
   const count = getRandomInt(MIN_COUNT_PHOTOS, MAX_COUNT_PHOTOS);
   return Array(count).fill([]).map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
+};
+
+export const generatePrice = () => {
+  return getRandomInt(MIN_PRICE, MAX_PRICE);
 };
 
 const generateDate = () => {
   const daysGap = getRandomInt(-MAX_DAYS_GAP, MAX_DAYS_GAP);
   const minutesGap = getRandomInt(MIN_MINUTE_GAP, MAX_MINUTE_GAP);
 
-  const dateStart = dayjs().add(daysGap, `day`).toDate();
+  const dateStart = dayjs().add(daysGap, `day`).add(getRandomInt(1, 60 * 24), `minute`).toDate();
   const dateEnd = dayjs(dateStart).add(minutesGap, `minute`).toDate();
   return {
     start: dateStart,
@@ -73,7 +77,7 @@ export const generatePoint = (offers) => {
     pointType,
     destination: generateCity(),
     offers: pointOffers,
-    price: getRandomInt(MIN_PRICE, MAX_PRICE),
+    price: generatePrice(),
     date: generateDate(),
     isFavorite: Boolean(getRandomInt(0, 1)),
     info: {
