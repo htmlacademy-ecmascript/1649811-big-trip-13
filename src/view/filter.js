@@ -1,5 +1,5 @@
-import Abstract from "./abstract";
 import {FilterType} from "../const";
+import Smart from "./smart";
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name, points} = filter;
@@ -11,8 +11,9 @@ const createFilterItemTemplate = (filter, isChecked) => {
   `;
 };
 
-const createFiltersTemplate = (filters, currentFilter) => {
-  const filterItems = filters
+const createFiltersTemplate = (data) => {
+  const {availableFilters, currentFilter} = data;
+  const filterItems = availableFilters
     .map((filter) => createFilterItemTemplate(filter, filter.name === currentFilter))
     .join(``);
 
@@ -23,17 +24,23 @@ const createFiltersTemplate = (filters, currentFilter) => {
     </form>`;
 };
 
-export default class Filter extends Abstract {
+export default class Filter extends Smart {
   constructor(filters, currentFilter = null) {
     super();
-    this._filters = filters;
-    this._currentFilter = currentFilter ? currentFilter : FilterType.DEFAULT;
+    this._data = this._parseFiltersToData(filters, currentFilter);
 
     this._handleFilterChange = this._handleFilterChange.bind(this);
   }
 
   getTemplate() {
-    return createFiltersTemplate(this._filters, this._currentFilter);
+    return createFiltersTemplate(this._data);
+  }
+
+  _parseFiltersToData(availableFilters, filter) {
+    if (filter === null) {
+      filter = FilterType.DEFAULT;
+    }
+    return Object.assign({}, {currentFilter: filter, availableFilters});
   }
 
   _handleFilterChange(evt) {
@@ -42,19 +49,19 @@ export default class Filter extends Abstract {
       return;
     }
 
-    const inputId = target.getAttribute(`for`);
-    const inputElements = this.getElement().querySelectorAll(`input`);
-    for (let element of inputElements) {
-      element.checked = element.id === inputId;
-    }
-
-    this._currentFilter = target.dataset.filterType;
+    const filterType = target.dataset.filterType;
+    this.updateData({currentFilter: filterType});
     this._callback.filterTypeChange(target.dataset.filterType);
   }
 
   setChangeFilterHandler(callback) {
     this._callback.filterTypeChange = callback;
 
+    this.getElement()
+      .addEventListener(`click`, this._handleFilterChange);
+  }
+
+  restoreHandlers() {
     this.getElement()
       .addEventListener(`click`, this._handleFilterChange);
   }
