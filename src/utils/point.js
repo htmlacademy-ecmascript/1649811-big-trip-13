@@ -64,3 +64,11 @@ export const sortByTime = (pointA, pointB) => {
 export const sortByDate = (pointA, pointB) => {
   return pointA.date.start - pointB.date.start;
 };
+
+export const formatPointFormDate = (date) => {
+  if (!date) {
+    return ``;
+  }
+
+  return dayjs(date).format(`DD/MM/YY HH:mm`);
+};

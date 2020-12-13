@@ -1,9 +1,12 @@
-import dayjs from "dayjs";
+import flatpickr from "flatpickr";
 import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../const";
-import Smart from "./smart";
-import {generateDestination} from "../mock/destination";
-import {parseDate} from "../utils/common";
 import {cities} from "../mock/data";
+import {generateDestination} from "../mock/destination";
+import {formatPointFormDate} from "../utils/point";
+import Smart from "./smart";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import "../../node_modules/flatpickr/dist/themes/material_blue.css";
 
 const destinations = generateDestination();
 
@@ -128,10 +131,24 @@ const createPointFormTemplate = (data) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+          <input
+            class="event__input
+            event__input--time"
+            id="event-start-time-1"
+            type="text"
+            name="event-start-time"
+            value="${formatPointFormDate(startDate)}"
+          >
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+          <input
+            class="event__input
+            event__input--time"
+            id="event-end-time-1"
+            type="text"
+            name="event-end-time"
+            value="${formatPointFormDate(endDate)}"
+          >
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -149,12 +166,9 @@ const createPointFormTemplate = (data) => {
         </button>
       </header>
       <section class="event__details">
-          <!-- Offers block -->
           ${offersBlock}
 
-         <!-- Destination Info -->
          ${destinationInfo}
-
       </section>
     </form>
   </li>`;
@@ -163,20 +177,22 @@ const createPointFormTemplate = (data) => {
 export default class PointForm extends Smart {
   constructor(point = EMPTY_POINT, offers) {
     super();
-
     this._offers = offers;
-    this._point = point;
+    // this._point = point;
     this._data = this._parsePointToData(point);
+    this._datepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formCloseHandler = this._formCloseHandler.bind(this);
     this._pointTypeToggleHandler = this._pointTypeToggleHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
-    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._dateStartChangeHandler = this._dateStartChangeHandler.bind(this);
+    this._dateEndChangeHandler = this._dateEndChangeHandler.bind(this);
     this._offerChangeHandler = this._offerChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   getTemplate() {
@@ -185,6 +201,11 @@ export default class PointForm extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    if (this._data.date.start > this._data.date.end) {
+      // Нужно какое-то предупреждение
+      console.log(`Error date interval`);
+      return;
+    }
     this._callback.formSubmit(this._parseDataToPoint(this._data));
   }
 
@@ -209,20 +230,10 @@ export default class PointForm extends Smart {
       ? this._offers[point.pointType]
       : null;
 
-    const date = {
-      start: point.date.start !== null
-        ? dayjs(point.date.start).format(`DD/MM/YY HH:mm`)
-        : ``,
-      end: point.date.end !== null
-        ? dayjs(point.date.end).format(`DD/MM/YY HH:mm`)
-        : ``,
-    };
-
     return Object.assign(
         {},
         point,
         {
-          date,
           availableOffers,
         }
     );
@@ -230,13 +241,7 @@ export default class PointForm extends Smart {
   }
 
   _parseDataToPoint(data) {
-    const date = {
-      start: parseDate(data.date.start),
-      end: parseDate(data.date.end),
-    };
-
-
-    data = Object.assign({}, data, {date});
+    data = Object.assign({}, data);
 
     delete data.availableOffers;
 
@@ -245,6 +250,7 @@ export default class PointForm extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormCloseHandler(this._callback.formClose);
   }
@@ -255,10 +261,6 @@ export default class PointForm extends Smart {
 
     this.getElement().querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._destinationChangeHandler);
-
-    Object.values(this.getElement().querySelectorAll(`.event__input--time`))
-      .forEach((element) => element.addEventListener(`change`, this._dateChangeHandler)
-      );
 
     if (this._data.availableOffers) {
       this.getElement().querySelector(`.event__available-offers`)
@@ -319,20 +321,15 @@ export default class PointForm extends Smart {
     this.updateData({destination: city, info: destinations[city].info});
   }
 
-  _dateChangeHandler(evt) {
+  _dateStartChangeHandler(evt) {
     const date = Object.assign({}, this._data.date);
+    date.start = new Date(evt);
+    this.updateData({date}, true);
+  }
 
-    if (evt.target.name === `event-start-time`) {
-      date.start = evt.target.value;
-    } else {
-      date.end = evt.target.value;
-    }
-
-    if (date.end < date.start) {
-      evt.target.focus();
-      return;
-    }
-
+  _dateEndChangeHandler(evt) {
+    const date = Object.assign({}, this._data.date);
+    date.end = new Date(evt);
     this.updateData({date}, true);
   }
 
@@ -350,5 +347,32 @@ export default class PointForm extends Smart {
 
   reset(point) {
     this.updateData(this._parsePointToData(point));
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.start.destroy();
+      this._datepicker.end.destroy();
+      this._datepicker = null;
+    }
+
+    const [startDate, endDate] = Array.from(
+        this.getElement().querySelectorAll(`.event__input--time`)
+    );
+
+    this._datepicker = {
+      start: flatpickr(startDate, {
+        enableTime: true,
+        dateFormat: `d/m/y H:i`,
+        defaultsDate: this._data.date.start,
+        onChange: this._dateStartChangeHandler,
+      }),
+      end: flatpickr(endDate, {
+        enableTime: true,
+        dateFormat: `d/m/y H:i`,
+        defaultsDate: this._data.date.end,
+        onChange: this._dateEndChangeHandler,
+      }),
+    };
   }
 }
