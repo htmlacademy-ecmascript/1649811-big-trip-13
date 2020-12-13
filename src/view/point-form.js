@@ -3,6 +3,7 @@ import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../const";
 import Smart from "./smart";
 import {generateDestination} from "../mock/destination";
 import {parseDate} from "../utils/common";
+import {cities} from "../mock/data";
 
 const destinations = generateDestination();
 
@@ -184,9 +185,7 @@ export default class PointForm extends Smart {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-
-    const data = this._parseDataToPoint(this._data);
-    this._callback.formSubmit(data);
+    this._callback.formSubmit(this._parseDataToPoint(this._data));
   }
 
   _formCloseHandler() {
@@ -284,7 +283,7 @@ export default class PointForm extends Smart {
       offers.splice(index, 1);
     } else {
       const offer = this._data.availableOffers
-        .find((item) => item.id === +target.dataset.offerId);
+        .find((item) => item.id === id);
 
       offers.push(offer);
     }
@@ -309,12 +308,15 @@ export default class PointForm extends Smart {
 
   _destinationChangeHandler(evt) {
     let city = evt.target.value;
+    // в chrome появляется дополнительньй город "b"
+    if (!city || !cities.includes(city)) {
+      evt.target.value = ``;
+      evt.target.placeholder = `Select city`;
+      evt.target.focus();
+      return;
+    }
 
-    const update = {
-      destination: city ? city : ``,
-      info: city ? destinations[city].info : null,
-    };
-    this.updateData(update);
+    this.updateData({destination: city, info: destinations[city].info});
   }
 
   _dateChangeHandler(evt) {
@@ -326,11 +328,23 @@ export default class PointForm extends Smart {
       date.end = evt.target.value;
     }
 
+    if (date.end < date.start) {
+      evt.target.focus();
+      return;
+    }
+
     this.updateData({date}, true);
   }
 
   _priceChangeHandler(evt) {
-    const price = evt.target.value;
+    const price = Number.parseInt(evt.target.value, 10);
+    if (!price) {
+      evt.target.value = ``;
+      evt.target.placeholder = `NaN`;
+      evt.target.focus();
+      return;
+    }
+
     this.updateData({price}, true);
   }
 }

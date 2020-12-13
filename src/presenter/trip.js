@@ -45,9 +45,8 @@ export default class Trip {
     this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
 
-    // this._filters = createFilters(this._points);
-    this._sortPoints(this._currentSortType);
     this._filterPoints(this._currentFilterType);
+    this._sortPoints(this._currentSortType);
     this._clearPointList();
     this._renderPointList();
   }
