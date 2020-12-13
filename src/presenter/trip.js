@@ -27,14 +27,11 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(points, offers, tripInfo) {
+  init(points, offers) {
     this._points = points.slice();
     this._sourcedPoints = points;
     this._offers = offers;
-    this._tripInfo = tripInfo;
     this._filters = createFilters(points);
-
-    this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
 
     this._renderTripInfo();
     this._renderTrip();
@@ -45,6 +42,7 @@ export default class Trip {
     this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
 
+    this._tripInfoPresenter.updateInfo(this._points);
     this._filterPoints(this._currentFilterType);
     this._sortPoints(this._currentSortType);
     this._clearPointList();
@@ -103,7 +101,7 @@ export default class Trip {
 
   _renderTripInfo() {
     this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
-    this._tripInfoPresenter.init(this._tripInfo, this._filters, this._currentFilterType);
+    this._tripInfoPresenter.init(this._points, this._filters, this._currentFilterType);
   }
 
   _renderTrip() {

@@ -1,5 +1,5 @@
 import flatpickr from "flatpickr";
-import {DEFAULT_POINT_TYPE, EMPTY_POINT, POINT_TYPES} from "../const";
+import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../const";
 import {cities} from "../mock/data";
 import {generateDestination} from "../mock/destination";
 import {formatPointFormDate} from "../utils/point";
@@ -175,7 +175,7 @@ const createPointFormTemplate = (data) => {
 };
 
 export default class PointForm extends Smart {
-  constructor(point = EMPTY_POINT, offers) {
+  constructor(point, offers) {
     super();
     this._offers = offers;
     // this._point = point;
@@ -203,7 +203,8 @@ export default class PointForm extends Smart {
     evt.preventDefault();
     if (this._data.date.start > this._data.date.end) {
       // Нужно какое-то предупреждение
-      console.log(`Error date interval`);
+      // eslint-disable-next-line no-alert
+      alert(`Error date interval`);
       return;
     }
     this._callback.formSubmit(this._parseDataToPoint(this._data));

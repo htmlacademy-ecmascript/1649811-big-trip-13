@@ -6,7 +6,7 @@ const defaultTrip = {
   date: ``,
 };
 
-const generateTitle = (points) => {
+const createTitle = (points) => {
   const length = points.length;
   switch (length) {
     case 1:
@@ -20,24 +20,24 @@ const generateTitle = (points) => {
   }
 };
 
-const generatePrice = (points) => {
+const createPrice = (points) => {
   return points.reduce((sum, item) => (sum + item.price), 0);
 };
 
-const generateDate = (points) => {
+const createDate = (points) => {
   const start = points[0].date.start;
   const end = points[points.length - 1].date.end;
 
   return `${dayjs(start).format(`DD MMM`)} — ${dayjs(end).format(`DD MMM`)}`;
 };
 
-export const generateTripInfo = (points) => {
+export const createTripInfo = (points) => {
   if (points.length === 0) {
     return defaultTrip;
   }
   return {
-    title: generateTitle(points),
-    price: generatePrice(points),
-    date: generateDate(points)
+    title: createTitle(points),
+    price: createPrice(points),
+    date: createDate(points)
   };
 };
