@@ -347,4 +347,8 @@ export default class PointForm extends Smart {
 
     this.updateData({price}, true);
   }
+
+  reset(point) {
+    this.updateData(this._parsePointToData(point));
+  }
 }
