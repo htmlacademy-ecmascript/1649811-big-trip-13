@@ -77,7 +77,7 @@ export default class Point {
             {
               isFavorite: !this._point.isFavorite
             }
-        )
+        ), true
     );
   }
 

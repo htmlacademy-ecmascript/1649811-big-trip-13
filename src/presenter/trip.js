@@ -38,9 +38,13 @@ export default class Trip {
   }
 
 
-  _handlePointChange(updatedPoint) {
+  _handlePointChange(updatedPoint, favoriteChange = false) {
     this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
+
+    if (favoriteChange) {
+      return;
+    }
 
     this._filterPoints(this._currentFilterType);
     this._tripInfoPresenter.update(this._sourcedPoints, this._filters, this._currentFilterType);
