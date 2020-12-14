@@ -338,7 +338,7 @@ export default class PointForm extends Smart {
     const price = Number.parseInt(evt.target.value, 10);
     if (!price) {
       evt.target.value = ``;
-      evt.target.placeholder = `NaN`;
+      evt.target.placeholder = `0`;
       evt.target.focus();
       return;
     }

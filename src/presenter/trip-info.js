@@ -38,12 +38,17 @@ export default class TripInfo {
     this._filterComponent.setChangeFilterHandler(this._changeFilterHadler);
   }
 
-  updateInfo(points) {
+  update(points, filters, currentFilter) {
     this._tripInfo = createTripInfo(points);
+
     this._tripInfoComponent.getElement().remove();
+    this._filterComponent.getElement().remove();
+
     this._tripInfoComponent = new TripInfoView(this._tripInfo);
+    this._filterComponent = new FilterView(filters, currentFilter);
 
     render(this._tripInfoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    this._renderFilter();
   }
 
 }

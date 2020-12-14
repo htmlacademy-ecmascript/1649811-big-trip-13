@@ -52,8 +52,8 @@ const generateDate = () => {
   const daysGap = getRandomInt(-MAX_DAYS_GAP, MAX_DAYS_GAP);
   const minutesGap = getRandomInt(MIN_MINUTE_GAP, MAX_MINUTE_GAP);
 
-  const dateStart = dayjs().add(daysGap, `day`).add(getRandomInt(1, 60 * 24), `minute`).toDate();
-  const dateEnd = dayjs(dateStart).add(minutesGap, `minute`).toDate();
+  const dateStart = dayjs().add(daysGap, `day`).add(getRandomInt(1, 60 * 24), `minute`);
+  const dateEnd = dayjs(dateStart).add(minutesGap, `minute`);
   return {
     start: dateStart,
     end: dateEnd,
