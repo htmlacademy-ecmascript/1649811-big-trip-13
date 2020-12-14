@@ -5,8 +5,8 @@ import {generateDestination} from "../mock/destination";
 import {formatPointFormDate} from "../utils/point";
 import Smart from "./smart";
 
-import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-import "../../node_modules/flatpickr/dist/themes/material_blue.css";
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/material_blue.css";
 
 const destinations = generateDestination();
 
