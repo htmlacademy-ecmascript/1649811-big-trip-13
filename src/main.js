@@ -1,11 +1,15 @@
 import {generatePoints} from "./mock/point";
 import {generateOffers} from "./mock/offer";
 import TripPresenter from "./presenter/trip";
+import PointsModel from "./model/points";
 
 const POINT_COUNT = 5;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
@@ -26,5 +30,5 @@ const tripPointsElement = bodyElement.querySelector(`.page-main section.trip-eve
 
 // renderTripMainBlock(mainTripElement, tripInfo, filters);
 
-const trip = new TripPresenter(tripInfoElement, tripPointsElement);
+const trip = new TripPresenter(tripInfoElement, tripPointsElement, pointsModel);
 trip.init(points, offers);

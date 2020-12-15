@@ -8,7 +8,8 @@ import {RenderPosition, render} from "../utils/render";
 import {createFilters, sortByDate, sortByPrice, sortByTime} from "../utils/point";
 
 export default class Trip {
-  constructor(tripInfoContainer, tripContainer) {
+  constructor(tripInfoContainer, tripContainer, pointsModel) {
+    this._pointsModel = pointsModel;
     this._tripInfoContainer = tripInfoContainer;
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
@@ -37,7 +38,6 @@ export default class Trip {
     this._renderTrip();
   }
 
-
   _handlePointChange(updatedPoint, favoriteChange = false) {
     this._updatePoint(updatedPoint);
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
@@ -60,7 +60,6 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-
   _handleFilterChange(filterType) {
     if (this._currentFilterType === filterType) {
       return;
@@ -80,6 +79,10 @@ export default class Trip {
     this._sortPoints(sortType);
     this._clearPointList();
     this._renderPointList();
+  }
+
+  _getPoints() {
+    this._pointsModel.getPoints();
   }
 
   _renderPoint(point) {
