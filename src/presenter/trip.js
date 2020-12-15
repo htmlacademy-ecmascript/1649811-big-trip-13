@@ -2,18 +2,16 @@ import SortView from "../view/sort";
 import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
-import TripInfoPresenter from "./trip-info";
 import {FilterType, SortType} from "../const";
 import {RenderPosition, render} from "../utils/render";
 import {createFilters, sortByDate, sortByPrice, sortByTime} from "../utils/point";
 
 export default class Trip {
-  constructor(tripInfoContainer, tripContainer, pointsModel) {
+  constructor(tripContainer, pointsModel) {
     this._pointsModel = pointsModel;
-    this._tripInfoContainer = tripInfoContainer;
+
     this._tripContainer = tripContainer;
     this._pointPresenter = {};
-    this._tripInfoPresenter = null;
 
     this._currentSortType = SortType.DEFAULT;
     this._currentFilterType = FilterType.DEFAULT;
@@ -28,30 +26,16 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(points, offers) {
-    this._points = points.slice();
-    this._sourcedPoints = points;
+  init(offers) {
     this._offers = offers;
-    this._filters = createFilters(points);
+    // this._filters = createFilters(points);
 
-    this._renderTripInfo();
     this._renderTrip();
   }
 
-  _handlePointChange(updatedPoint, favoriteChange = false) {
-    this._updatePoint(updatedPoint);
+  _handlePointChange(updatedPoint) {
+    // update model
     this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
-
-    if (favoriteChange) {
-      return;
-    }
-
-    this._filterPoints(this._currentFilterType);
-    this._tripInfoPresenter.update(this._sourcedPoints, this._filters, this._currentFilterType);
-
-    this._sortPoints(this._currentSortType);
-    this._clearPointList();
-    this._renderPointList();
   }
 
   _handleModeChange() {
@@ -76,13 +60,20 @@ export default class Trip {
       return;
     }
 
-    this._sortPoints(sortType);
+    this._currentSortType = sortType;
     this._clearPointList();
     this._renderPointList();
   }
 
   _getPoints() {
-    this._pointsModel.getPoints();
+    switch (this._currentSortType) {
+      case SortType.TIME:
+        return this._pointsModel.getPoints().slice().sort(sortByTime);
+      case SortType.PRICE:
+        return this._pointsModel.getPoints().slice().sort(sortByPrice);
+      default:
+        return this._pointsModel.getPoints().slice().sort(sortByDate);
+    }
   }
 
   _renderPoint(point) {
@@ -95,7 +86,8 @@ export default class Trip {
   _renderPointList() {
     render(this._tripContainer, this._pointListComponent, RenderPosition.BEFOREEND);
 
-    this._points.forEach((point) => this._renderPoint(point));
+    const points = this._getPoints();
+    points.forEach((point) => this._renderPoint(point));
   }
 
   _renderNoPoints() {
@@ -105,11 +97,6 @@ export default class Trip {
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
-  _renderTripInfo() {
-    this._tripInfoPresenter = new TripInfoPresenter(this._tripInfoContainer, this._handleFilterChange);
-    this._tripInfoPresenter.init(this._points, this._filters, this._currentFilterType);
   }
 
   _renderTrip() {
@@ -123,26 +110,11 @@ export default class Trip {
     this._renderPointList();
   }
 
-  _filterPoints(filterType) {
-    this._currentFilterType = filterType;
-    const currentFilter = this._filters.find((filter) => filter.name === filterType);
-    this._points = currentFilter.points;
-  }
-
-  _sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.PRICE:
-        this._points.sort(sortByPrice);
-        break;
-      case SortType.TIME:
-        this._points.sort(sortByTime);
-        break;
-      default:
-        this._points.sort(sortByDate);
-    }
-
-    this._currentSortType = sortType;
-  }
+  // _filterPoints(filterType) {
+  //   this._currentFilterType = filterType;
+  //   const currentFilter = this._filters.find((filter) => filter.name === filterType);
+  //   this._points = currentFilter.points;
+  // }
 
   _clearPointList() {
     Object
