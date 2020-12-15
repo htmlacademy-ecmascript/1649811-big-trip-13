@@ -1,6 +1,8 @@
+/* eslint-disable indent */
 import PointEditView from "../view/point-form";
 import PointView from "../view/point";
 import {remove, render, RenderPosition, replace} from "../utils/render";
+import {UserAction, UpdateType} from "../const";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -60,7 +62,11 @@ export default class Point {
   }
 
   _handleFormSubmit(point) {
-    this._changeData(point);
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
     this._replaceFormToPoint();
   }
 
@@ -71,13 +77,15 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
         Object.assign(
-            {},
-            this._point,
-            {
-              isFavorite: !this._point.isFavorite
-            }
-        ), true
+        {},
+        this._point,
+        {
+          isFavorite: !this._point.isFavorite
+        }
+      ), true
     );
   }
 

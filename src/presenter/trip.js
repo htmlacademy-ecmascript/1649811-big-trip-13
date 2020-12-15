@@ -2,9 +2,9 @@ import SortView from "../view/sort";
 import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
-import {FilterType, SortType} from "../const";
+import {SortType} from "../const";
 import {RenderPosition, render} from "../utils/render";
-import {createFilters, sortByDate, sortByPrice, sortByTime} from "../utils/point";
+import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 
 export default class Trip {
   constructor(tripContainer, pointsModel) {
@@ -14,16 +14,17 @@ export default class Trip {
     this._pointPresenter = {};
 
     this._currentSortType = SortType.DEFAULT;
-    this._currentFilterType = FilterType.DEFAULT;
 
     this._noPointComponent = new NoPointView();
     this._pointListComponent = new PointListView();
     this._sortComponent = new SortView();
 
     this._handleModeChange = this._handleModeChange.bind(this);
-    this._handlePointChange = this._handlePointChange.bind(this);
-    this._handleFilterChange = this._handleFilterChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
   }
 
   init(offers) {
@@ -33,26 +34,26 @@ export default class Trip {
     this._renderTrip();
   }
 
-  _handlePointChange(updatedPoint) {
-    // update model
-    this._pointPresenter[updatedPoint.id].init(updatedPoint, this._offers);
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _handleModeChange() {
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.resetView());
-  }
-
-  _handleFilterChange(filterType) {
-    if (this._currentFilterType === filterType) {
-      return;
-    }
-
-    this._filterPoints(filterType);
-    this._sortPoints(this._currentSortType);
-    this._clearPointList();
-    this._renderPointList();
   }
 
   _handleSortTypeChange(sortType) {
@@ -77,7 +78,7 @@ export default class Trip {
   }
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent, this._handlePointChange, this._handleModeChange);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModeChange);
     pointPresenter.init(point, this._offers);
 
     this._pointPresenter[point.id] = pointPresenter;
@@ -100,21 +101,14 @@ export default class Trip {
   }
 
   _renderTrip() {
-    if (this._points.length === 0) {
+    if (this._getPoints().length === 0) {
       this._renderNoPoints();
       return;
     }
 
     this._renderSort();
-
     this._renderPointList();
   }
-
-  // _filterPoints(filterType) {
-  //   this._currentFilterType = filterType;
-  //   const currentFilter = this._filters.find((filter) => filter.name === filterType);
-  //   this._points = currentFilter.points;
-  // }
 
   _clearPointList() {
     Object
@@ -122,18 +116,5 @@ export default class Trip {
       .forEach((presenter) => presenter.destroy());
 
     this._pointPresenter = {};
-  }
-
-  _updatePoint(updatedPoint) {
-    let index = this._points.findIndex((point) => point.id === updatedPoint.id);
-    if (index !== -1) {
-      this._points[index] = updatedPoint;
-    }
-
-    index = this._sourcedPoints.findIndex((point) => point.id === updatedPoint.id);
-    if (index !== -1) {
-      this._sourcedPoints[index] = updatedPoint;
-      this._filters = createFilters(this._sourcedPoints);
-    }
   }
 }
