@@ -5,12 +5,14 @@ import PointPresenter from "./point";
 import {SortType, UpdateType, UserAction} from "../const";
 import {RenderPosition, render, remove} from "../utils/render";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
+import {filter} from "../utils/filter";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel) {
-    this._pointsModel = pointsModel;
-
+  constructor(tripContainer, pointsModel, filterModel) {
     this._tripContainer = tripContainer;
+    this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
+
     this._pointPresenter = {};
 
     this._currentSortType = SortType.DEFAULT;
@@ -25,6 +27,7 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init(offers) {
@@ -85,13 +88,17 @@ export default class Trip {
   }
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortByTime);
+        return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortByPrice);
+        return filteredPoints.sort(sortByPrice);
       default:
-        return this._pointsModel.getPoints().slice().sort(sortByDate);
+        return filteredPoints.sort(sortByDate);
     }
   }
 

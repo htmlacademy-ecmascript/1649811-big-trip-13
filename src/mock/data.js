@@ -13,7 +13,7 @@ export const descriptions = [
 
 export const cities = [
   `Amsterdam`, `London`, `New York`, `Cairo`, `Istanbul`, `Geneva`, `Dresden`,
-  `Berlin`, `Begin`, `Madrid`, `Munich`, `Warsaw`, `Sofia`,
+  `Berlin`, `Beijing`, `Madrid`, `Munich`, `Warsaw`, `Sofia`, `Wroclaw`, `Delhi`
 ];
 
 export const transportOffers = [

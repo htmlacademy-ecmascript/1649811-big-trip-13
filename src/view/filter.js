@@ -1,19 +1,19 @@
 import {FilterType} from "../const";
-import Smart from "./smart";
+import AbstractView from "./abstract";
 
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name, points} = filter;
+  const disabled = points.length === 0 ? `disabled` : ``;
   return `
   <div class="trip-filters__filter">
-    <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
+    <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``} ${disabled}>
     <label class="trip-filters__filter-label" for="filter-${name}" data-filter-type="${name}">${name} ${points.length}</label>
   </div>
   `;
 };
 
-const createFiltersTemplate = (data) => {
-  const {availableFilters, currentFilter} = data;
-  const filterItems = availableFilters
+const createFiltersTemplate = (filters, currentFilter) => {
+  const filterItems = filters
     .map((filter) => createFilterItemTemplate(filter, filter.name === currentFilter))
     .join(``);
 
@@ -24,45 +24,29 @@ const createFiltersTemplate = (data) => {
     </form>`;
 };
 
-export default class Filter extends Smart {
-  constructor(filters, currentFilter = null) {
+export default class Filter extends AbstractView {
+  constructor(filters, currentFilterType = null) {
     super();
-    this._data = this._parseFiltersToData(filters, currentFilter);
+    this._filters = filters;
+    this._currentFilter = currentFilterType ? currentFilterType : FilterType.DEFAULT;
 
-    this._handleFilterChange = this._handleFilterChange.bind(this);
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createFiltersTemplate(this._data);
+    return createFiltersTemplate(this._filters, this._currentFilter);
   }
 
-  _parseFiltersToData(availableFilters, filter) {
-    if (filter === null) {
-      filter = FilterType.DEFAULT;
-    }
-    return Object.assign({}, {currentFilter: filter, availableFilters});
-  }
-
-  _handleFilterChange(evt) {
-    const target = evt.target.closest(`label`);
-    if (target === null) {
+  _filterTypeChangeHandler(evt) {
+    const target = evt.target.closest(`input`);
+    if (!target) {
       return;
     }
-
-    const filterType = target.dataset.filterType;
-    this.updateData({currentFilter: filterType});
-    this._callback.filterTypeChange(target.dataset.filterType);
+    this._callback.filterTypeChange(evt.target.value);
   }
 
-  setChangeFilterHandler(callback) {
+  setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
-
-    this.getElement()
-      .addEventListener(`click`, this._handleFilterChange);
-  }
-
-  restoreHandlers() {
-    this.getElement()
-      .addEventListener(`click`, this._handleFilterChange);
+    this.getElement().addEventListener(`change`, this._filterTypeChangeHandler);
   }
 }

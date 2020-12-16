@@ -18,7 +18,6 @@ export const EMPTY_POINT = {
   info: null,
 };
 
-
 export const FilterType = {
   DEFAULT: `Everything`,
   FUTURE: `Future`,
