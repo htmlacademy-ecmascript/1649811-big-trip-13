@@ -3,9 +3,8 @@ import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../const";
 import {cities} from "../mock/data";
 import {generateDestination} from "../mock/destination";
 import {formatPointFormDate} from "../utils/point";
-import Smart from "./smart";
+import SmartView from "./smart";
 
-import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/material_blue.css";
 
 const destinations = generateDestination();
@@ -174,15 +173,15 @@ const createPointFormTemplate = (data) => {
   </li>`;
 };
 
-export default class PointForm extends Smart {
+export default class PointForm extends SmartView {
   constructor(point, offers) {
     super();
     this._offers = offers;
-    // this._point = point;
     this._data = this._parsePointToData(point);
     this._datepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._formCloseHandler = this._formCloseHandler.bind(this);
     this._pointTypeToggleHandler = this._pointTypeToggleHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
@@ -199,6 +198,14 @@ export default class PointForm extends Smart {
     return createPointFormTemplate(this._data);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._deleteDatePicker();
+    }
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
     if (this._data.date.start > this._data.date.end) {
@@ -210,8 +217,19 @@ export default class PointForm extends Smart {
     this._callback.formSubmit(this._parseDataToPoint(this._data));
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._parsePointToData(this._data));
+  }
+
   _formCloseHandler() {
     this._callback.formClose();
+  }
+
+  setFormDeleteHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, this._formDeleteClickHandler);
   }
 
   setFormSubmitHandler(callback) {
@@ -254,6 +272,7 @@ export default class PointForm extends Smart {
     this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormCloseHandler(this._callback.formClose);
+    this.setFormDeleteHandler(this._callback.deleteClick);
   }
 
   _setInnerHandlers() {
@@ -350,11 +369,15 @@ export default class PointForm extends Smart {
     this.updateData(this._parsePointToData(point));
   }
 
+  _deleteDatePicker() {
+    this._datepicker.start.destroy();
+    this._datepicker.end.destroy();
+    this._datepicker = null;
+  }
+
   _setDatepicker() {
     if (this._datepicker) {
-      this._datepicker.start.destroy();
-      this._datepicker.end.destroy();
-      this._datepicker = null;
+      this._deleteDatePicker();
     }
 
     const [startDate, endDate] = Array.from(

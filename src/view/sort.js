@@ -1,11 +1,12 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 import {SortType} from "../const";
+import {createElement} from "../utils/render";
 
 const createSortTemplate = () => {
   return `
   <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SortType.DEFAULT}" checked>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SortType.DEFAULT}">
       <label class="trip-sort__btn" for="sort-day">Day</label>
     </div>
 
@@ -32,15 +33,29 @@ const createSortTemplate = () => {
     `;
 };
 
-export default class Sort extends Abstract {
-  constructor() {
+export default class Sort extends AbstractView {
+  constructor(currentSortType) {
     super();
 
+    this._currentSortType = currentSortType;
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
     return createSortTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    this._element
+      .querySelector(`input[value="${this._currentSortType}"]`)
+      .checked = true;
+
+
+    return this._element;
   }
 
   _sortTypeChangeHandler(evt) {

@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import PointEditView from "../view/point-form";
 import PointView from "../view/point";
 import {remove, render, RenderPosition, replace} from "../utils/render";
@@ -24,6 +23,7 @@ export default class Point {
     this._handleFormClose = this._handleFormClose.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(point, offers) {
@@ -39,6 +39,7 @@ export default class Point {
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setFormCloseHandler(this._handleFormClose);
+    this._pointEditComponent.setFormDeleteHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this._pointListContainer, this._pointComponent, RenderPosition.BEFOREEND);
@@ -63,9 +64,9 @@ export default class Point {
 
   _handleFormSubmit(point) {
     this._changeData(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      point
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        point
     );
     this._replaceFormToPoint();
   }
@@ -77,15 +78,23 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._changeData(
-      UserAction.UPDATE_POINT,
-      UpdateType.PATCH,
+        UserAction.UPDATE_POINT,
+        UpdateType.PATCH,
         Object.assign(
-        {},
-        this._point,
-        {
-          isFavorite: !this._point.isFavorite
-        }
-      ), true
+            {},
+            this._point,
+            {
+              isFavorite: !this._point.isFavorite
+            }
+        )
+    );
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
     );
   }
 
