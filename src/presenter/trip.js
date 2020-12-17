@@ -2,7 +2,8 @@ import SortView from "../view/sort";
 import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
-import {SortType, UpdateType, UserAction} from "../const";
+import PointNewPresenter from "./point-new";
+import {FilterType, SortType, UpdateType, UserAction} from "../const";
 import {RenderPosition, render, remove} from "../utils/render";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
@@ -32,15 +33,12 @@ export default class Trip {
 
   init(offers) {
     this._offers = offers;
-
+    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, offers);
     this._renderTrip();
   }
 
   _handleViewAction(actionType, updateType, update) {
-
-    console.log(actionType, updateType, update);
-
-    switch(actionType) {
+    switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._pointsModel.updatePoint(updateType, update);
         break;
@@ -54,8 +52,6 @@ export default class Trip {
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
-
     switch (updateType) {
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(data, this._offers);
@@ -72,6 +68,7 @@ export default class Trip {
   }
 
   _handleModeChange() {
+    this._pointNewPresenter.destroy();
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.resetView());
@@ -85,6 +82,12 @@ export default class Trip {
     this._currentSortType = sortType;
     this._clearPointList();
     this._renderPointList();
+  }
+
+  createPoint() {
+    this._currentSortType = SortType.DEFAULT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
+    this._pointNewPresenter.init();
   }
 
   _getPoints() {
@@ -159,6 +162,7 @@ export default class Trip {
       .forEach((presenter) => presenter.destroy());
 
     this._pointPresenter = {};
+    this._pointNewPresenter.destroy();
 
     remove(this._sortComponent);
     remove(this._noPointComponent);

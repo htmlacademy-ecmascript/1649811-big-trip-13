@@ -32,14 +32,6 @@ export const checkInOffers = [
   `Room with a view`,
 ];
 
-// export const sightseeingOffers = [
-//   `Historical centre`,
-//   `Cultural centre`,
-//   `Walking tour`,
-//   `Hop on tour`,
-//   `Old city`,
-// ];
-
 export const restaurantOffers = [
   `Vegetarian food`,
   `Fast food`,

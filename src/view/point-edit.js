@@ -1,5 +1,5 @@
 import flatpickr from "flatpickr";
-import {DEFAULT_POINT_TYPE, POINT_TYPES} from "../const";
+import {POINT_TYPES} from "../const";
 import {cities} from "../mock/data";
 import {generateDestination} from "../mock/destination";
 import {formatPointFormDate} from "../utils/point";
@@ -50,7 +50,7 @@ const createEventItem = (eventType, pointType) => {
   `;
 };
 
-const createEventTypeTemplate = (pointType = DEFAULT_POINT_TYPE) => {
+const createEventTypeTemplate = (pointType) => {
   const items = POINT_TYPES.map((eventType) => createEventItem(eventType, pointType)).join(``);
   return `
   <div class="event__type-wrapper">
@@ -173,7 +173,7 @@ const createPointFormTemplate = (data) => {
   </li>`;
 };
 
-export default class PointForm extends SmartView {
+export default class PointEdit extends SmartView {
   constructor(point, offers) {
     super();
     this._offers = offers;
@@ -208,6 +208,15 @@ export default class PointForm extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+
+    if (!cities.includes(this._data.destination)) {
+      alert(`Destination not selected`);
+      return;
+    }
+    if (!this._data.date.start || !this._data.date.end) {
+      alert(`No dates selected`);
+      return;
+    }
     if (this._data.date.start > this._data.date.end) {
       // Нужно какое-то предупреждение
       // eslint-disable-next-line no-alert

@@ -27,8 +27,8 @@ const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 tripInfo.init();
 
 // trip
-const trip = new TripPresenter(tripPointsElement, pointsModel, filterModel);
-trip.init(offers);
+const tripPresenter = new TripPresenter(tripPointsElement, pointsModel, filterModel);
+tripPresenter.init(offers);
 
 // menu
 const menuHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden`);
@@ -36,6 +36,12 @@ render(menuHeaderElement, new MenuView(), RenderPosition.AFTER);
 
 // filter
 const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
-// render(filterHeaderElement, new FilterView(filters), RenderPosition.AFTER);
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 filterPresenter.init();
+
+
+tripInfoElement.querySelector(`.trip-main__event-add-btn`)
+  .addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    tripPresenter.createPoint();
+  });

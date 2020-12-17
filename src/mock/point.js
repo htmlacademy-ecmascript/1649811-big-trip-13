@@ -24,7 +24,7 @@ function makeCounter() {
   };
 }
 
-const generateId = makeCounter();
+export const generateId = makeCounter();
 
 const getRandomPointType = () => {
   return POINT_TYPES[getRandomInt(0, POINT_TYPES.length - 1)];

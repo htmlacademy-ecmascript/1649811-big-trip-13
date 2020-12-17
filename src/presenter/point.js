@@ -1,4 +1,4 @@
-import PointEditView from "../view/point-form";
+import PointEditView from "../view/point-edit";
 import PointView from "../view/point";
 import {remove, render, RenderPosition, replace} from "../utils/render";
 import {UserAction, UpdateType} from "../const";

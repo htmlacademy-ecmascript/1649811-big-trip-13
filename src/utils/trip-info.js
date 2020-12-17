@@ -21,7 +21,12 @@ const createTitle = (points) => {
 };
 
 const createPrice = (points) => {
-  return points.reduce((sum, item) => (sum + item.price), 0);
+  return points.reduce((sum, item) => {
+    const offersPrice = item.offers
+      ? item.offers.reduce((offersSum, offer) => (offersSum + offer.price), 0)
+      : 0;
+    return sum + item.price + offersPrice;
+  }, 0);
 };
 
 const createDate = (points) => {
