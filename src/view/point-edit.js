@@ -8,6 +8,7 @@ import SmartView from "./smart";
 import "flatpickr/dist/themes/material_blue.css";
 
 const destinations = generateDestination();
+const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace$/;
 
 const createOfferItem = (offer, offers, pointType) => {
   const {title, price, id: offerId} = offer;
@@ -209,16 +210,19 @@ export default class PointEdit extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
 
+    // Нужны какие-то предупреждения
+
     if (!cities.includes(this._data.destination)) {
+      // eslint-disable-next-line no-alert
       alert(`Destination not selected`);
       return;
     }
     if (!this._data.date.start || !this._data.date.end) {
+      // eslint-disable-next-line no-alert
       alert(`No dates selected`);
       return;
     }
     if (this._data.date.start > this._data.date.end) {
-      // Нужно какое-то предупреждение
       // eslint-disable-next-line no-alert
       alert(`Error date interval`);
       return;
@@ -297,7 +301,10 @@ export default class PointEdit extends SmartView {
     }
 
     this.getElement().querySelector(`.event__input--price`)
-      .addEventListener(`change`, this._priceChangeHandler);
+      .addEventListener(`keydown`, this._priceKeyDownHandler);
+
+    this.getElement().querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._priceChangeHandler);
   }
 
   _offerChangeHandler(evt) {
@@ -362,12 +369,15 @@ export default class PointEdit extends SmartView {
     this.updateData({date}, true);
   }
 
+  _priceKeyDownHandler(evt) {
+    if (!priceKeyDownRegex.test(evt.key)) {
+      evt.preventDefault();
+    }
+  }
+
   _priceChangeHandler(evt) {
     const price = Number.parseInt(evt.target.value, 10);
     if (!price) {
-      evt.target.value = ``;
-      evt.target.placeholder = `0`;
-      evt.target.focus();
       return;
     }
 
