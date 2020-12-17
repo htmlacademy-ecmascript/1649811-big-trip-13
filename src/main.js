@@ -21,13 +21,14 @@ const filterModel = new FilterModel();
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
 const tripPointsElement = bodyElement.querySelector(`.page-main section.trip-events`);
+const addPointButton = tripInfoElement.querySelector(`.trip-main__event-add-btn`);
 
 // tripInfo
 const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 tripInfo.init();
 
 // trip
-const tripPresenter = new TripPresenter(tripPointsElement, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(tripPointsElement, pointsModel, filterModel, addPointButton);
 tripPresenter.init(offers);
 
 // menu
@@ -39,9 +40,9 @@ const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:la
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 filterPresenter.init();
 
-
-tripInfoElement.querySelector(`.trip-main__event-add-btn`)
+addPointButton
   .addEventListener(`click`, (evt) => {
+    addPointButton.disabled = true;
     evt.preventDefault();
     tripPresenter.createPoint();
   });

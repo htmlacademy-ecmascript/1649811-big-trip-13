@@ -9,10 +9,11 @@ import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel) {
+  constructor(tripContainer, pointsModel, filterModel, addPointButton) {
     this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
+    this._addPointButton = addPointButton;
 
     this._pointPresenter = {};
 
@@ -21,6 +22,7 @@ export default class Trip {
     this._sortComponent = null;
     this._noPointComponent = null;
     this._pointListComponent = null;
+    this._pointNewPresenter = null;
 
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -32,8 +34,11 @@ export default class Trip {
   }
 
   init(offers) {
-    this._offers = offers;
-    this._pointNewPresenter = new PointNewPresenter(this._tripContainer, this._handleViewAction, offers);
+    this._offers = Object.assign({}, offers);
+    this._pointNewPresenter = new PointNewPresenter(
+        this._tripContainer, this._handleViewAction, this._offers
+    );
+
     this._renderTrip();
   }
 
@@ -87,7 +92,7 @@ export default class Trip {
   createPoint() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(this._addPointButton);
   }
 
   _getPoints() {

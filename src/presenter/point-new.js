@@ -10,6 +10,7 @@ export default class PointNew {
     this._offers = offers;
 
     this._pointEditComponent = null;
+    this._addButton = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -17,11 +18,12 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(addButton) {
     if (this._pointEditComponent !== null) {
       return;
     }
 
+    this._addButton = addButton;
     this._pointEditComponent = new PointEditView(EMPTY_POINT, this._offers);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setFormCloseHandler(this._handleFormClose);
@@ -57,6 +59,11 @@ export default class PointNew {
   }
 
   destroy() {
+    if (this._addButton !== null) {
+      this._addButton.disabled = false;
+      this._addButton = null;
+    }
+
     if (this._pointEditComponent === null) {
       return;
     }
