@@ -5,10 +5,12 @@ import TripInfoPresenter from "./presenter/trip-info";
 import FilterPresenter from "./presenter/filter";
 import PointsModel from "./model/points";
 import FilterModel from "./model/filter";
-import MenuView from "./view/menu";
+import SiteMenuView from "./view/site-menu";
+import StatisticsView from "./view/statistics";
 import {RenderPosition, render} from "./utils/render";
+import {MenuItem} from "./const";
 
-const POINT_COUNT = 5;
+const POINT_COUNT = 15;
 
 const offers = generateOffers();
 const points = generatePoints(POINT_COUNT, offers);
@@ -20,7 +22,7 @@ const filterModel = new FilterModel();
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
-const tripPointsElement = bodyElement.querySelector(`.page-main section.trip-events`);
+const tripElement = bodyElement.querySelector(`.page-main section.trip-events`);
 const addPointButton = tripInfoElement.querySelector(`.trip-main__event-add-btn`);
 
 // tripInfo
@@ -28,12 +30,29 @@ const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 tripInfo.init();
 
 // trip
-const tripPresenter = new TripPresenter(tripPointsElement, pointsModel, filterModel, addPointButton);
+const tripPresenter = new TripPresenter(tripElement, pointsModel, filterModel, addPointButton);
 tripPresenter.init(offers);
 
 // menu
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      tripPresenter.show();
+      addPointButton.disabled = false;
+      statsComponent.hide();
+      break;
+    case MenuItem.STATS:
+      tripPresenter.hide();
+      addPointButton.disabled = true;
+      statsComponent.show();
+      break;
+  }
+};
+const siteMenuComponent = new SiteMenuView();
+siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
 const menuHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden`);
-render(menuHeaderElement, new MenuView(), RenderPosition.AFTER);
+render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
 
 // filter
 const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
@@ -46,3 +65,7 @@ addPointButton
     evt.preventDefault();
     tripPresenter.createPoint();
   });
+
+// statistics
+const statsComponent = new StatisticsView(points);
+render(tripElement, statsComponent, RenderPosition.AFTER);

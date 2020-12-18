@@ -28,13 +28,14 @@ export default class Trip {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init(offers) {
     this._offers = Object.assign({}, offers);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._pointNewPresenter = new PointNewPresenter(
         this._tripContainer, this._handleViewAction, this._offers
     );
@@ -87,6 +88,24 @@ export default class Trip {
     this._currentSortType = sortType;
     this._clearPointList();
     this._renderPointList();
+  }
+
+  destroy() {
+    this._clearTrip(true);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  show() {
+    this._tripContainer.classList.remove(`trip-events--hidden`);
+    this._clearTrip(true);
+    this._renderTrip();
+  }
+
+  hide() {
+    this._tripContainer.classList.add(`trip-events--hidden`);
+    this._clearTrip(true);
   }
 
   createPoint() {
