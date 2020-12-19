@@ -1,9 +1,10 @@
 import SmartView from "./smart";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {getData, getLabels} from "../utils/statistics";
 
 
-const BAR_HEIGHT = 60;
+const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, labels, moneys) => {
 
@@ -11,10 +12,8 @@ const renderMoneyChart = (moneyCtx, labels, moneys) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      // labels: [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`],
       labels,
       datasets: [{
-        // data: [400, 300, 200, 160, 150, 100],
         data: moneys,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
@@ -40,6 +39,10 @@ const renderMoneyChart = (moneyCtx, labels, moneys) => {
         fontSize: 23,
         position: `left`
       },
+      dataset: {
+        barThickness: 44,
+        minBarLength: 50,
+      },
       scales: {
         yAxes: [{
           ticks: {
@@ -51,7 +54,6 @@ const renderMoneyChart = (moneyCtx, labels, moneys) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -62,7 +64,6 @@ const renderMoneyChart = (moneyCtx, labels, moneys) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -75,14 +76,14 @@ const renderMoneyChart = (moneyCtx, labels, moneys) => {
   });
 };
 
-const renderTypeChart = (typeCtx, labels, counts) => {
+const renderTypeChart = (typeCtx, labels, countTypes) => {
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels,
       datasets: [{
-        data: counts,
+        data: countTypes,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -107,6 +108,10 @@ const renderTypeChart = (typeCtx, labels, counts) => {
         fontSize: 23,
         position: `left`
       },
+      dataset: {
+        barThickness: 44,
+        minBarLength: 50,
+      },
       scales: {
         yAxes: [{
           ticks: {
@@ -118,7 +123,6 @@ const renderTypeChart = (typeCtx, labels, counts) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -129,7 +133,6 @@ const renderTypeChart = (typeCtx, labels, counts) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -142,14 +145,14 @@ const renderTypeChart = (typeCtx, labels, counts) => {
   });
 };
 
-const renderTimeChart = (timeCtx, points) => {
+const renderTimeChart = (timeCtx, labels, countDays) => {
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`TAXI`, `BUS`, `TRAIN`, `SHIP`, `TRANSPORT`, `DRIVE`],
+      labels,
       datasets: [{
-        data: [4, 3, 2, 1, 1, 1],
+        data: countDays,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -164,7 +167,7 @@ const renderTimeChart = (timeCtx, points) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `${val}x`
+          formatter: (val) => `${val}D`
         }
       },
       title: {
@@ -173,6 +176,10 @@ const renderTimeChart = (timeCtx, points) => {
         fontColor: `#000000`,
         fontSize: 23,
         position: `left`
+      },
+      dataset: {
+        barThickness: 44,
+        minBarLength: 50,
       },
       scales: {
         yAxes: [{
@@ -185,7 +192,6 @@ const renderTimeChart = (timeCtx, points) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -196,7 +202,6 @@ const renderTimeChart = (timeCtx, points) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {
@@ -211,7 +216,7 @@ const renderTimeChart = (timeCtx, points) => {
 
 const createStatisticsTemplate = () => {
   return `
-  <section class="statistics visually-hidden">
+  <section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
 
           <div class="statistics__item statistics__item--money">
@@ -233,9 +238,7 @@ export default class Statistics extends SmartView {
   constructor(points) {
     super();
 
-    this._data = {
-      points
-    };
+    this._data = {points};
 
     this._moneyChart = null;
     this._typeChart = null;
@@ -244,43 +247,50 @@ export default class Statistics extends SmartView {
     this._setCharts();
   }
 
+  removeElement() {
+    super.removeElement();
+
+    this._removeCharts();
+  }
+
+  _removeCharts() {
+    if (
+      this._moneyChart !== null ||
+      this._typeChart !== null ||
+      this._timeChart !== null
+    ) {
+      this._moneyChart = null;
+      this._typeChart = null;
+      this._timeChart = null;
+    }
+  }
+
+  restoreHandlers() {
+    this._setCharts();
+  }
+
   getTemplate() {
     return createStatisticsTemplate();
   }
 
   _setCharts() {
+    this._removeCharts();
+
     this._moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
     this._typeCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     this._timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
     const {points} = this._data;
 
-    const labels = [...new Set(points.map((point) => point.pointType.toUpperCase()))];
-    const moneys = [];
-    const counts = [];
-    const days = [];
-    labels.forEach((label) => {
-      let price = 0;
-      let count = 0;
-      points.forEach((point) => {
-        if (point.pointType.toUpperCase() === label) {
-          price += point.price;
-          count++;
-        }
-      });
-      moneys.push(price);
-      counts.push(count);
-    });
+    const labels = getLabels(points);
+
+    const [moneys, countTypes, countDays] = getData(labels, points);
 
     this._moneyCtx.height = this._typeCtx.height = this._timeCtx.height
       = BAR_HEIGHT * labels.length;
 
-
     this._moneyChart = renderMoneyChart(this._moneyCtx, labels, moneys);
-    this._typeChart = renderTypeChart(this._typeCtx, labels, counts);
-    this._timeChart = renderTimeChart(this._timeCtx, points);
-
+    this._typeChart = renderTypeChart(this._typeCtx, labels, countTypes);
+    this._timeChart = renderTimeChart(this._timeCtx, labels, countDays);
   }
-
 }
-

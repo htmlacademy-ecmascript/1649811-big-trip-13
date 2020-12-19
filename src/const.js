@@ -44,5 +44,6 @@ export const UpdateType = {
 
 export const MenuItem = {
   TABLE: `Table`,
-  STATS: `Stats`
+  STATS: `Stats`,
+  ADD_POINT: `New event`
 };

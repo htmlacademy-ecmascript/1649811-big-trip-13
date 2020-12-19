@@ -121,7 +121,9 @@ const createPointFormTemplate = (data) => {
             ${pointType}
 
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text"
+          name="event-destination" value="${destination}" placeholder="Select city"
+          list="destination-list-1">
           <datalist id="destination-list-1">
 
             ${destinationList}
@@ -137,6 +139,7 @@ const createPointFormTemplate = (data) => {
             id="event-start-time-1"
             type="text"
             name="event-start-time"
+            placeholder="Select start"
             value="${formatPointFormDate(startDate)}"
           >
           &mdash;
@@ -147,6 +150,7 @@ const createPointFormTemplate = (data) => {
             id="event-end-time-1"
             type="text"
             name="event-end-time"
+            placeholder="Select end"
             value="${formatPointFormDate(endDate)}"
           >
         </div>
@@ -346,7 +350,7 @@ export default class PointEdit extends SmartView {
 
   _destinationChangeHandler(evt) {
     let city = evt.target.value;
-    // в chrome появляется дополнительньй город "b"
+
     if (!city || !cities.includes(city)) {
       evt.target.value = ``;
       evt.target.placeholder = `Select city`;

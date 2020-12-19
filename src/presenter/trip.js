@@ -9,11 +9,10 @@ import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel, addPointButton) {
+  constructor(tripContainer, pointsModel, filterModel) {
     this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
-    this._addPointButton = addPointButton;
 
     this._pointPresenter = {};
 
@@ -91,27 +90,16 @@ export default class Trip {
   }
 
   destroy() {
-    this._clearTrip(true);
+    this._clearTrip();
 
     this._pointsModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
-  show() {
-    this._tripContainer.classList.remove(`trip-events--hidden`);
-    this._clearTrip(true);
-    this._renderTrip();
-  }
-
-  hide() {
-    this._tripContainer.classList.add(`trip-events--hidden`);
-    this._clearTrip(true);
-  }
-
-  createPoint() {
+  createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
-    this._pointNewPresenter.init(this._addPointButton);
+    this._pointNewPresenter.init(callback);
   }
 
   _getPoints() {
