@@ -23,21 +23,19 @@ const filterModel = new FilterModel();
 const bodyElement = document.querySelector(`.page-body`);
 const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
 const tripElement = bodyElement.querySelector(`.page-main section.trip-events`);
-
-// tripInfo
-const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
-tripInfo.init();
-
-// trip
-const tripPresenter = new TripPresenter(tripElement, pointsModel, filterModel);
-tripPresenter.init(offers);
-
-// menu
-const siteMenuComponent = new SiteMenuView(tripInfoElement);
 const menuHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden`);
-render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
+const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
 
+const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
+const tripPresenter = new TripPresenter(tripElement, pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
+const siteMenuComponent = new SiteMenuView(tripInfoElement);
 let statisticsComponent = null;
+
+tripInfo.init();
+tripPresenter.init(offers);
+filterPresenter.init();
+render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
@@ -59,10 +57,4 @@ const handleSiteMenuClick = (menuItem) => {
       break;
   }
 };
-
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-
-// filter
-const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
-const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
-filterPresenter.init();

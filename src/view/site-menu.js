@@ -48,8 +48,8 @@ export default class SiteMenu extends Abstract {
     menuItemTable.classList.add(`trip-tabs__btn--active`);
     menuItemTable.nextElementSibling.classList.remove(`trip-tabs__btn--active`);
   }
-  _setMenuItem(element) {
 
+  _setMenuItem(element) {
     if (element.previousElementSibling) {
       element.previousElementSibling.classList.remove(`trip-tabs__btn--active`);
     } else {
