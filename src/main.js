@@ -7,8 +7,8 @@ import PointsModel from "./model/points";
 import FilterModel from "./model/filter";
 import SiteMenuView from "./view/site-menu";
 import StatisticsView from "./view/statistics";
-import {RenderPosition, render, remove} from "./utils/render";
-import {FilterType, MenuItem, UpdateType} from "./const";
+import {RenderPosition, render} from "./utils/render";
+import {MenuItem} from "./const";
 
 const POINT_COUNT = 5;
 
@@ -30,31 +30,30 @@ const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 const tripPresenter = new TripPresenter(tripElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 const siteMenuComponent = new SiteMenuView(tripInfoElement);
-let statisticsComponent = null;
+const statisticsComponent = new StatisticsView(pointsModel);
 
 tripInfo.init();
 tripPresenter.init(offers);
 filterPresenter.init();
 render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
+render(tripElement, statisticsComponent, RenderPosition.AFTER);
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
-      remove(statisticsComponent);
-      tripPresenter.init(offers);
+      tripPresenter.show(true);
+      statisticsComponent.hide();
       break;
     case MenuItem.STATS:
-      tripPresenter.destroy();
-      statisticsComponent = new StatisticsView(pointsModel.getPoints());
-      render(tripElement, statisticsComponent, RenderPosition.AFTER);
+      tripPresenter.hide();
+      statisticsComponent.show();
       break;
     case MenuItem.ADD_POINT:
-      remove(statisticsComponent);
-      tripPresenter.destroy();
-      filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
-      tripPresenter.init(offers);
+      statisticsComponent.hide();
+      tripPresenter.show(true);
       tripPresenter.createPoint(siteMenuComponent.enableAddPointButton);
       break;
   }
 };
+
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);

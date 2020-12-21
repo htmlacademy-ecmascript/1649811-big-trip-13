@@ -9,7 +9,7 @@ export const EMPTY_POINT = {
   pointType: DEFAULT_POINT_TYPE,
   destination: ``,
   offers: [],
-  price: 0,
+  price: ``,
   date: {
     start: null,
     end: null,

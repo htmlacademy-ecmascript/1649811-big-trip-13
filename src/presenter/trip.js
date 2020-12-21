@@ -96,6 +96,19 @@ export default class Trip {
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
+  show(resetSort = false) {
+    this._tripContainer.classList.remove(`visually-hidden`);
+
+    if (resetSort) {
+      this._clearTrip(true);
+      this._renderTrip();
+    }
+  }
+
+  hide() {
+    this._tripContainer.classList.add(`visually-hidden`);
+  }
+
   createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);

@@ -2,6 +2,7 @@ import SmartView from "./smart";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {getData, getLabels} from "../utils/statistics";
+import {UpdateType} from "../const";
 
 
 const BAR_HEIGHT = 55;
@@ -216,7 +217,7 @@ const renderTimeChart = (timeCtx, labels, countDays) => {
 
 const createStatisticsTemplate = () => {
   return `
-  <section class="statistics">
+  <section class="statistics visually-hidden">
           <h2 class="visually-hidden">Trip statistics</h2>
 
           <div class="statistics__item statistics__item--money">
@@ -235,16 +236,34 @@ const createStatisticsTemplate = () => {
 };
 
 export default class Statistics extends SmartView {
-  constructor(points) {
+  constructor(pointsModel) {
     super();
 
-    this._data = {points};
+    this._pointsModel = pointsModel;
 
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;
 
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._pointsModel.addObserver(this._handleModelEvent);
+
+    this._setData();
     this._setCharts();
+  }
+
+  _handleModelEvent(updateType) {
+    switch (updateType) {
+      case UpdateType.MINOR:
+      case UpdateType.MAJOR:
+        this._setData();
+        this.updateElement();
+        break;
+    }
+  }
+
+  _setData() {
+    this._data = Object.assign({}, this._pointsModel.getPoints());
   }
 
   removeElement() {
@@ -267,6 +286,7 @@ export default class Statistics extends SmartView {
 
   restoreHandlers() {
     this._setCharts();
+    this._handleModelEvent = this._handleModelEvent.bind(this);
   }
 
   getTemplate() {
@@ -280,7 +300,7 @@ export default class Statistics extends SmartView {
     this._typeCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     this._timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    const {points} = this._data;
+    const points = Object.values(this._data);
 
     const labels = getLabels(points);
 

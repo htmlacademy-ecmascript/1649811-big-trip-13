@@ -160,7 +160,15 @@ const createPointFormTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input
+            class="event__input
+            event__input--price"
+            id="event-price-1"
+            type="text"
+            name="event-price"
+            placeholder="0"
+            value="${price}"
+          >
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -278,6 +286,7 @@ export default class PointEdit extends SmartView {
 
   _parseDataToPoint(data) {
     data = Object.assign({}, data);
+    data.price = Number.isInteger(data.price) ? data.price : 0;
 
     delete data.availableOffers;
 
