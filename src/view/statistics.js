@@ -2,8 +2,6 @@ import SmartView from "./smart";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {getData, getLabels} from "../utils/statistics";
-import {UpdateType} from "../const";
-
 
 const BAR_HEIGHT = 55;
 
@@ -236,40 +234,17 @@ const createStatisticsTemplate = () => {
 };
 
 export default class Statistics extends SmartView {
-  constructor(pointsModel) {
+  constructor() {
     super();
-
-    this._pointsModel = pointsModel;
 
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;
-
-    this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._pointsModel.addObserver(this._handleModelEvent);
-
-    this._setData();
-    this._setCharts();
   }
 
-  _handleModelEvent(updateType) {
-    switch (updateType) {
-      case UpdateType.MINOR:
-      case UpdateType.MAJOR:
-        this._setData();
-        this.updateElement();
-        break;
-    }
-  }
-
-  _setData() {
-    this._data = Object.assign({}, this._pointsModel.getPoints());
-  }
-
-  removeElement() {
-    super.removeElement();
-
-    this._removeCharts();
+  init(points) {
+    this._data = Object.assign({}, points);
+    this.updateElement();
   }
 
   _removeCharts() {
@@ -286,7 +261,6 @@ export default class Statistics extends SmartView {
 
   restoreHandlers() {
     this._setCharts();
-    this._handleModelEvent = this._handleModelEvent.bind(this);
   }
 
   getTemplate() {

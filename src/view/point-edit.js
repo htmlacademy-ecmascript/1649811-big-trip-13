@@ -390,7 +390,8 @@ export default class PointEdit extends SmartView {
 
   _priceChangeHandler(evt) {
     const price = Number.parseInt(evt.target.value, 10);
-    if (!price) {
+
+    if (price === null) {
       return;
     }
 

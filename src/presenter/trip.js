@@ -96,7 +96,7 @@ export default class Trip {
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
-  show(resetSort = false) {
+  show(resetSort = true) {
     this._tripContainer.classList.remove(`visually-hidden`);
 
     if (resetSort) {

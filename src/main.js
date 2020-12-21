@@ -30,7 +30,7 @@ const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 const tripPresenter = new TripPresenter(tripElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 const siteMenuComponent = new SiteMenuView(tripInfoElement);
-const statisticsComponent = new StatisticsView(pointsModel);
+const statisticsComponent = new StatisticsView();
 
 tripInfo.init();
 tripPresenter.init(offers);
@@ -41,16 +41,17 @@ render(tripElement, statisticsComponent, RenderPosition.AFTER);
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
-      tripPresenter.show(true);
+      tripPresenter.show();
       statisticsComponent.hide();
       break;
     case MenuItem.STATS:
       tripPresenter.hide();
+      statisticsComponent.init(pointsModel.getPoints());
       statisticsComponent.show();
       break;
     case MenuItem.ADD_POINT:
       statisticsComponent.hide();
-      tripPresenter.show(true);
+      tripPresenter.show();
       tripPresenter.createPoint(siteMenuComponent.enableAddPointButton);
       break;
   }
