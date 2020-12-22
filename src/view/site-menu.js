@@ -1,4 +1,4 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 import {MenuItem} from "../const";
 
 const createMenuTemplate = () => {
@@ -10,7 +10,7 @@ const createMenuTemplate = () => {
     `;
 };
 
-export default class SiteMenu extends Abstract {
+export default class SiteMenu extends AbstractView {
   constructor(tripInfoElement) {
     super();
 

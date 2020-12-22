@@ -41,7 +41,12 @@ export const generateDescription = () => {
 
 export const generateImages = () => {
   const count = getRandomInt(MIN_COUNT_PHOTOS, MAX_COUNT_PHOTOS);
-  return Array(count).fill([]).map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
+  return Array(count).fill([]).map(() => (
+    {
+      src: `http://picsum.photos/248/152?r=${Math.random()}`,
+      description: `image ${Math.random()}`
+    }
+  ));
 };
 
 export const generatePrice = () => {

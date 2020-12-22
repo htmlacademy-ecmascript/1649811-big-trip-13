@@ -1,24 +1,20 @@
 import flatpickr from "flatpickr";
-import {POINT_TYPES} from "../const";
-import {cities} from "../mock/data";
-import {generateDestination} from "../mock/destination";
 import {formatPointFormDate} from "../utils/point";
 import SmartView from "./smart";
 
 import "flatpickr/dist/themes/material_blue.css";
 
-const destinations = generateDestination();
-const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace$/;
+const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace|Tab$/;
 
-const createOfferItem = (offer, offers, pointType) => {
-  const {title, price, id: offerId} = offer;
-  const typeName = `event-offer-${pointType.toLowerCase()}`;
-  const id = `${typeName}-${offerId}`;
-  const checked = offers.includes(offer) ? `checked` : ``;
+const createOfferItem = (offer, offers) => {
+  const {title, price} = offer;
+  const id = title.split(` `).join(`-`);
+  const checked = offers.find((item) => item.title === title) ? `checked` : ``;
+
   return `
   <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${typeName}" ${checked}>
-    <label class="event__offer-label" for="${id}" data-offer-id="${offerId}">
+    <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${id}" ${checked}>
+    <label class="event__offer-label" for="${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -51,8 +47,8 @@ const createEventItem = (eventType, pointType) => {
   `;
 };
 
-const createEventTypeTemplate = (pointType) => {
-  const items = POINT_TYPES.map((eventType) => createEventItem(eventType, pointType)).join(``);
+const createEventTypeTemplate = (pointType, types) => {
+  const items = types.map((eventType) => createEventItem(eventType, pointType)).join(``);
   return `
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -73,7 +69,7 @@ const createEventTypeTemplate = (pointType) => {
 
 const createDestinationImagesTemplate = (images) => {
   const items = images.map((image) => (
-    `<img class="event__photo" src="${image}" alt="Event photo">`)).join(``);
+    `<img class="event__photo" src="${image.src}" alt="${image.description}">`)).join(``);
   return `
   <div class="event__photos-container">
     <div class="event__photos-tape">
@@ -95,10 +91,11 @@ const createDestinationTemplate = (destination, info) => {
   `;
 };
 
-const createPointFormTemplate = (data) => {
+const createPointFormTemplate = (data, offers, destinations) => {
   const {pointType, price, destination, info, availableOffers} = data;
   const {start: startDate, end: endDate} = data.date;
-  const eventTypeBlock = createEventTypeTemplate(pointType);
+  const eventTypeBlock = createEventTypeTemplate(pointType, Object.keys(offers));
+  // debugger;
   const offersBlock = availableOffers
     ? createOffersTemplate(data)
     : ``;
@@ -187,9 +184,11 @@ const createPointFormTemplate = (data) => {
 };
 
 export default class PointEdit extends SmartView {
-  constructor(point, offers) {
+  constructor(point, offers, destinations) {
     super();
-    this._offers = offers;
+
+    this._offers = Object.assign({}, offers);
+    this._destinations = Object.assign({}, destinations);
     this._data = this._parsePointToData(point);
     this._datepicker = null;
 
@@ -208,7 +207,7 @@ export default class PointEdit extends SmartView {
   }
 
   getTemplate() {
-    return createPointFormTemplate(this._data);
+    return createPointFormTemplate(this._data, this._offers, this._destinations);
   }
 
   removeElement() {
@@ -224,7 +223,7 @@ export default class PointEdit extends SmartView {
 
     // Нужны какие-то предупреждения
 
-    if (!cities.includes(this._data.destination)) {
+    if (!(this._data.destination in this._destinations)) {
       // eslint-disable-next-line no-alert
       alert(`Destination not selected`);
       return;
@@ -326,15 +325,16 @@ export default class PointEdit extends SmartView {
       return;
     }
 
-    const id = +target.dataset.offerId;
+    const title = target.getAttribute(`for`).split(`-`).join(` `);
+
     const offers = this._data.offers.slice();
-    const index = offers.findIndex((item) => item.id === id);
+    const index = offers.findIndex((item) => item.title === title);
 
     if (index !== -1) {
       offers.splice(index, 1);
     } else {
       const offer = this._data.availableOffers
-        .find((item) => item.id === id);
+        .find((item) => item.title === title);
 
       offers.push(offer);
     }
@@ -360,14 +360,14 @@ export default class PointEdit extends SmartView {
   _destinationChangeHandler(evt) {
     let city = evt.target.value;
 
-    if (!city || !cities.includes(city)) {
+    if (!city || !(city in this._destinations)) {
       evt.target.value = ``;
       evt.target.placeholder = `Select city`;
       evt.target.focus();
       return;
     }
 
-    this.updateData({destination: city, info: destinations[city].info});
+    this.updateData({destination: city, info: this._destinations[city].info});
   }
 
   _dateStartChangeHandler(evt) {
@@ -391,7 +391,7 @@ export default class PointEdit extends SmartView {
   _priceChangeHandler(evt) {
     const price = Number.parseInt(evt.target.value, 10);
 
-    if (price === null) {
+    if (isNaN(price)) {
       return;
     }
 

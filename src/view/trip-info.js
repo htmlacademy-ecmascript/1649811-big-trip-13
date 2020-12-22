@@ -1,4 +1,4 @@
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 
 const createTripInfoTemplate = (trip) => {
   const {title, date, price} = trip;
@@ -17,7 +17,7 @@ const createTripInfoTemplate = (trip) => {
 `;
 };
 
-export default class TripInfo extends Abstract {
+export default class TripInfo extends AbstractView {
   constructor(trip) {
     super();
     this._trip = trip;

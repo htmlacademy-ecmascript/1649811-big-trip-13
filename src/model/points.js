@@ -7,8 +7,10 @@ export default class Points extends Observer {
     this._points = [];
   }
 
-  setPoints(points) {
-    this._points = points.slice();
+  setPoints(UpdateType, points) {
+    this._points = points.map((point) => this._adaptPoint(point));
+
+    this._notify(UpdateType);
   }
 
   getPoints() {
@@ -54,5 +56,48 @@ export default class Points extends Observer {
     ];
 
     this._notify(updateType);
+  }
+
+  _adaptPoint(point) {
+    const clone = Object.assign({}, point);
+
+    return {
+      id: clone.id,
+      pointType: clone.type[0].toUpperCase() + clone.type.slice(1),
+      destination: clone.destination.name,
+      offers: clone.offers,
+      price: clone.base_price,
+      date: {
+        start: clone.date_from,
+        end: clone.date_to,
+      },
+      isFavorite: clone.is_favorite,
+      info: {
+        description: clone.destination.description,
+        images: clone.destination.pictures,
+      }
+    };
+  }
+
+  static adaptToServer(point) {
+    const clone = Object.assign({}, point);
+
+    return {
+      "id": clone.id,
+      "type": clone.pointType.toLowerCase(),
+      "date_from": clone.date.start.toISOString(),
+      "date_to": clone.date.end.toISOString(),
+      "destination": {
+        "name": clone.destination,
+        "description": clone.info.description,
+        "pictures": clone.info.images
+      },
+      "base_price": clone.price,
+      "is_favorite": clone.isFavorite,
+      "offers": clone.offers.map((item) => {
+        delete item.id;
+        return item;
+      }),
+    };
   }
 }

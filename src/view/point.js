@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import Abstract from "./abstract";
+import AbstractView from "./abstract";
 import {getDuration} from "../utils/point";
 
 const createOfferItem = (offer) => {
@@ -77,7 +77,7 @@ const createPointTemplate = (point) => {
    `;
 };
 
-export default class Point extends Abstract {
+export default class Point extends AbstractView {
   constructor(point) {
     super();
     this._point = point;

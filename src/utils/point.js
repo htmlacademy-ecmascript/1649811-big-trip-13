@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import {cities} from "../mock/data";
+import {generateDescription, generateImages} from "../mock/point";
 
 const printTimeUnit = (unit) => {
   return `${unit}`.padStart(2, `0`);

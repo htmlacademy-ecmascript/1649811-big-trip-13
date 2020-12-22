@@ -3,21 +3,27 @@ import PointListView from "../view/point-list";
 import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import PointNewPresenter from "./point-new";
+import LoadingView from "../view/loading";
 import {FilterType, SortType, UpdateType, UserAction} from "../const";
 import {RenderPosition, render, remove} from "../utils/render";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel) {
+  constructor(tripContainer, pointsModel, filterModel, offersModel, destinationsModel) {
     this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
-
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
     this._pointPresenter = {};
-
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
+    this._isOffersLoad = false;
+    this._isDestinationLoad = false;
 
+
+    this._loadingComponent = new LoadingView();
     this._sortComponent = null;
     this._noPointComponent = null;
     this._pointListComponent = null;
@@ -29,14 +35,14 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(offers) {
-    this._offers = Object.assign({}, offers);
-
+  init() {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._offersModel.addObserver(this._handleModelEvent);
+    this._destinationsModel.addObserver(this._handleModelEvent);
 
     this._pointNewPresenter = new PointNewPresenter(
-        this._tripContainer, this._handleViewAction, this._offers
+        this._tripContainer, this._handleViewAction
     );
 
     this._renderTrip();
@@ -59,7 +65,11 @@ export default class Trip {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._pointPresenter[data.id].init(data, this._offers);
+        this._pointPresenter[data.id].init(
+            data,
+            this._offersModel.getOffers(),
+            this._destinationsModel.getDestinations()
+        );
         break;
       case UpdateType.MINOR:
         this._clearTrip();
@@ -68,6 +78,25 @@ export default class Trip {
       case UpdateType.MAJOR:
         this._clearTrip(true);
         this._renderTrip();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderTrip();
+        break;
+      case UpdateType.OFFERS_INIT:
+        this._isOffersLoad = true;
+        if (this._isDestinationLoad) {
+          this._clearTrip();
+          this._renderTrip();
+        }
+        break;
+      case UpdateType.DESTINATIONS_INIT:
+        this._isDestinationLoad = true;
+        if (this._isOffersLoad) {
+          this._clearTrip();
+          this._renderTrip();
+        }
         break;
     }
   }
@@ -130,9 +159,16 @@ export default class Trip {
     }
   }
 
+  _renderLoading() {
+    render(this._tripContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _renderPoint(point) {
+    const offers = Object.assign({}, this._offersModel.getOffers());
+    const destinations = Object.assign({}, this._destinationsModel.getDestinations());
+
     const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModeChange);
-    pointPresenter.init(point, this._offers);
+    pointPresenter.init(point, offers, destinations);
 
     this._pointPresenter[point.id] = pointPresenter;
   }
@@ -162,6 +198,11 @@ export default class Trip {
   }
 
   _renderTrip() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const points = this._getPoints();
 
     if (points.length === 0) {
@@ -189,6 +230,7 @@ export default class Trip {
     this._pointPresenter = {};
     this._pointNewPresenter.destroy();
 
+    remove(this._loadingComponent);
     remove(this._sortComponent);
     remove(this._noPointComponent);
     remove(this._pointListComponent);
