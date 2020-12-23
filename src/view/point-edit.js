@@ -372,13 +372,13 @@ export default class PointEdit extends SmartView {
 
   _dateStartChangeHandler(evt) {
     const date = Object.assign({}, this._data.date);
-    date.start = new Date(evt);
+    date.start = new Date(evt).toISOString();
     this.updateData({date}, true);
   }
 
   _dateEndChangeHandler(evt) {
     const date = Object.assign({}, this._data.date);
-    date.end = new Date(evt);
+    date.end = new Date(evt).toISOString();
     this.updateData({date}, true);
   }
 

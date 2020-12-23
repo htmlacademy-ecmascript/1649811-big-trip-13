@@ -20,7 +20,8 @@ export default class Api {
 
   getPoints() {
     return this._load({url: `points`})
-      .then(Api.toJson);
+      .then(Api.toJson)
+      .then((points) => points.map(PointModel.adaptToClient));
   }
 
   getOffers() {
@@ -37,10 +38,11 @@ export default class Api {
     return this._load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(PointModel.adaptToServer(point)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJson);
+      .then(Api.toJson)
+      .then((updatedPoint) => PointModel.adaptToClient(updatedPoint));
   }
 
   _load({

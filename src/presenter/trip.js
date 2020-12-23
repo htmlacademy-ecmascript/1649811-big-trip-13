@@ -10,12 +10,14 @@ import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
 
 export default class Trip {
-  constructor(tripContainer, pointsModel, filterModel, offersModel, destinationsModel) {
+  constructor(tripContainer, pointsModel, filterModel, offersModel, destinationsModel, api) {
     this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
+    this._api = api;
+
     this._pointPresenter = {};
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
@@ -51,7 +53,9 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);
@@ -67,8 +71,8 @@ export default class Trip {
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(
             data,
-            this._offersModel.getOffers(),
-            this._destinationsModel.getDestinations()
+            Object.assign({}, this._offersModel.getOffers()),
+            Object.assign({}, this._destinationsModel.getDestinations())
         );
         break;
       case UpdateType.MINOR:

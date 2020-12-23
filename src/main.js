@@ -29,7 +29,7 @@ const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:la
 
 const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 const tripPresenter = new TripPresenter(
-    tripElement, pointsModel, filterModel, offersModel, destinationsModel
+    tripElement, pointsModel, filterModel, offersModel, destinationsModel, api
 );
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 const siteMenuComponent = new SiteMenuView(tripInfoElement);

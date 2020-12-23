@@ -8,7 +8,7 @@ export default class Points extends Observer {
   }
 
   setPoints(UpdateType, points) {
-    this._points = points.map((point) => this._adaptPoint(point));
+    this._points = points.slice();
 
     this._notify(UpdateType);
   }
@@ -58,7 +58,7 @@ export default class Points extends Observer {
     this._notify(updateType);
   }
 
-  _adaptPoint(point) {
+  static adaptToClient(point) {
     const clone = Object.assign({}, point);
 
     return {
@@ -85,8 +85,8 @@ export default class Points extends Observer {
     return {
       "id": clone.id,
       "type": clone.pointType.toLowerCase(),
-      "date_from": clone.date.start.toISOString(),
-      "date_to": clone.date.end.toISOString(),
+      "date_from": clone.date.start,
+      "date_to": clone.date.end,
       "destination": {
         "name": clone.destination,
         "description": clone.info.description,
