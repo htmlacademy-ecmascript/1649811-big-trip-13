@@ -28,5 +28,5 @@ export default class Offers extends Observer {
     }
 
     return adaptedOffers;
-  };
+  }
 }

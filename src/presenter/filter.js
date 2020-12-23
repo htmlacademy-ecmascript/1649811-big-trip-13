@@ -1,4 +1,4 @@
-import {FilterType, UpdateType} from "../const";
+import {UpdateType} from "../const";
 import {filter} from "../utils/filter";
 import FilterView from "../view/filter";
 import {RenderPosition, render, replace, remove} from "../utils/render";
@@ -41,33 +41,6 @@ export default class Filter {
   _handleModelEvent() {
     this.init();
   }
-
-  // init() {
-  //   const prevFilterComponent = this._filterComponent;
-  //   this._filterComponent = new FilterView(this._filters, this._currentFilter);
-  //   this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
-  //
-  //   if (prevFilterComponent === null) {
-  //     render(this._filterHeaderElement, this._filterComponent, RenderPosition.AFTER);
-  //     return;
-  //   }
-  //
-  //   replace(this._filterComponent, prevFilterComponent);
-  //   remove(prevFilterComponent);
-  // }
-  //
-  // _handleModelEvent() {
-  //   this._currentFilter = this._filterModel.getFilter();
-  //   this._filters = this._getFilters();
-  //   const pointsCount = this._filters
-  //     .find((item) => item.name === this._currentFilter)
-  //     .points.length;
-  //   if (pointsCount === 0 && this._currentFilter !== FilterType.DEFAULT) {
-  //     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
-  //     return;
-  //   }
-  //   this.init();
-  // }
 
   _handleFilterTypeChange(filterType) {
     if (this._currentFilter === filterType) {
