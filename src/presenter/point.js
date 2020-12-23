@@ -58,6 +58,10 @@ export default class Point {
     remove(prevPointEditComponent);
   }
 
+  enableEdit() {
+    this._pointComponent.enableEditButton();
+  }
+
   _handleEditClick() {
     this._replacePointToForm();
   }

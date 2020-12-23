@@ -23,7 +23,7 @@ export default class Trip {
     this._isLoading = true;
     this._isOffersLoad = false;
     this._isDestinationLoad = false;
-
+    this._callback = {};
 
     this._loadingComponent = new LoadingView();
     this._sortComponent = null;
@@ -103,6 +103,12 @@ export default class Trip {
         }
         break;
     }
+    if (this._isOffersLoad && this._isDestinationLoad) {
+      this._callback.enableAddPointButton();
+      Object
+        .values(this._pointPresenter)
+        .forEach((presenter) => presenter.enableEdit());
+    }
   }
 
   _handleModeChange() {
@@ -122,12 +128,12 @@ export default class Trip {
     this._renderPointList();
   }
 
-  destroy() {
-    this._clearTrip();
-
-    this._pointsModel.removeObserver(this._handleModelEvent);
-    this._filterModel.removeObserver(this._handleModelEvent);
-  }
+  // destroy() {
+  //   this._clearTrip();
+  //
+  //   this._pointsModel.removeObserver(this._handleModelEvent);
+  //   this._filterModel.removeObserver(this._handleModelEvent);
+  // }
 
   show(resetSort = true) {
     this._tripContainer.classList.remove(`visually-hidden`);
@@ -142,10 +148,18 @@ export default class Trip {
     this._tripContainer.classList.add(`visually-hidden`);
   }
 
+  setAddPointButtonEnableHandler(callback) {
+    this._callback.enableAddPointButton = callback;
+  }
+
   createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
-    this._pointNewPresenter.init(callback);
+    this._pointNewPresenter.init(
+        callback,
+        this._offersModel.getOffers(),
+        this._destinationsModel.getDestinations()
+    );
   }
 
   _getPoints() {

@@ -1,13 +1,17 @@
 import PointEditView from "../view/point-edit";
 import {EMPTY_POINT, UpdateType, UserAction} from "../const";
 import {remove, render, RenderPosition} from "../utils/render";
-import {generateId} from "../mock/point";
+
+// временная заглушка
+const generateId = () => {
+  return Date.now() + Math.floor(Math.random() * 1000);
+};
 
 export default class PointNew {
-  constructor(pointListContainer, changeData, offers) {
+  constructor(pointListContainer, changeData) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
-    this._offers = offers;
+
 
     this._pointEditComponent = null;
     this._destroyCallback = null;
@@ -18,13 +22,13 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(callback) {
+  init(callback, offers, destinations) {
     if (this._pointEditComponent !== null) {
       return;
     }
 
     this._destroyCallback = callback;
-    this._pointEditComponent = new PointEditView(EMPTY_POINT, this._offers);
+    this._pointEditComponent = new PointEditView(EMPTY_POINT, offers, destinations);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setFormCloseHandler(this._handleFormClose);
     this._pointEditComponent.setFormDeleteHandler(this._handleDeleteClick);

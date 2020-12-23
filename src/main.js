@@ -37,6 +37,7 @@ const statisticsComponent = new StatisticsView();
 
 tripInfo.init();
 tripPresenter.init();
+tripPresenter.setAddPointButtonEnableHandler(siteMenuComponent.enableAddPointButton);
 filterPresenter.init();
 
 render(tripElement, statisticsComponent, RenderPosition.AFTER);
@@ -74,15 +75,9 @@ api.getPoints()
 api.getOffers()
   .then((offers) => {
     offersModel.setOffers(UpdateType.OFFERS_INIT, offers);
-  })
-  .catch(() => {
-    offersModel.setOffers(UpdateType.OFFERS_INIT, {});
   });
 
 api.getDestinations()
   .then((destinations) => {
     destinationsModel.setDestination(UpdateType.DESTINATIONS_INIT, destinations);
-  })
-  .catch(() => {
-    destinationsModel.setDestination(UpdateType.DESTINATIONS_INIT, {});
   });

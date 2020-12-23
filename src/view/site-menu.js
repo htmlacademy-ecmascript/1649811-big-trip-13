@@ -15,6 +15,7 @@ export default class SiteMenu extends AbstractView {
     super();
 
     this._addPointButton = tripInfoElement.querySelector(`.trip-main__event-add-btn`);
+    this._addPointButton.disabled = true;
     this._menuClickHandler = this._menuClickHandler.bind(this);
     this.enableAddPointButton = this.enableAddPointButton.bind(this);
   }

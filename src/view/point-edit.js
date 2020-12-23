@@ -389,10 +389,10 @@ export default class PointEdit extends SmartView {
   }
 
   _priceChangeHandler(evt) {
-    const price = Number.parseInt(evt.target.value, 10);
+    let price = Number.parseInt(evt.target.value, 10);
 
-    if (isNaN(price)) {
-      return;
+    if (price !== price) {
+      price = 0;
     }
 
     this.updateData({price}, true);
