@@ -2,16 +2,10 @@ import PointEditView from "../view/point-edit";
 import {EMPTY_POINT, UpdateType, UserAction} from "../const";
 import {remove, render, RenderPosition} from "../utils/render";
 
-// временная заглушка
-const generateId = () => {
-  return Date.now() + Math.floor(Math.random() * 1000);
-};
-
 export default class PointNew {
   constructor(pointListContainer, changeData) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
-
 
     this._pointEditComponent = null;
     this._destroyCallback = null;
@@ -38,13 +32,20 @@ export default class PointNew {
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MAJOR,
-        Object.assign({id: generateId()}, point)
+        point
     );
-    this.destroy();
+    // this.destroy();
   }
 
   _handleDeleteClick() {

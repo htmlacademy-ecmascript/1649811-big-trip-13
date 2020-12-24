@@ -1,12 +1,7 @@
 import PointEditView from "../view/point-edit";
 import PointView from "../view/point";
 import {remove, render, RenderPosition, replace} from "../utils/render";
-import {UserAction, UpdateType} from "../const";
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
+import {UserAction, UpdateType, Mode, State} from "../const";
 
 export default class Point {
   constructor(pointListContainer, changeData, changeMode) {
@@ -26,13 +21,13 @@ export default class Point {
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(point, offers, destinations) {
+  init(point, offers, destinations, isDataLoaded) {
     this._point = point;
 
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 
-    this._pointComponent = new PointView(point);
+    this._pointComponent = new PointView(point, isDataLoaded);
     this._pointEditComponent = new PointEditView(point, offers, destinations);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
@@ -51,11 +46,30 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditComponent, prevPointEditComponent);
+      // replace(this._pointEditComponent, prevPointEditComponent);
+      replace(this._pointComponent, prevPointEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
+  }
+
+  setViewState(state) {
+    switch (state) {
+      case State.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+    }
   }
 
   enableEdit() {
@@ -72,7 +86,7 @@ export default class Point {
         UpdateType.MINOR,
         point
     );
-    this._replaceFormToPoint();
+    // this._replaceFormToPoint();
   }
 
   _handleFormClose() {

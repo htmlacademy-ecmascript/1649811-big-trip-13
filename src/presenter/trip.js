@@ -4,7 +4,7 @@ import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import PointNewPresenter from "./point-new";
 import LoadingView from "../view/loading";
-import {FilterType, SortType, UpdateType, UserAction} from "../const";
+import {FilterType, SortType, UpdateType, UserAction, State} from "../const";
 import {RenderPosition, render, remove} from "../utils/render";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
@@ -53,15 +53,22 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this._pointPresenter[update.id].setViewState(State.SAVING);
         this._api.updatePoint(update).then((response) => {
           this._pointsModel.updatePoint(updateType, response);
         });
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addPoint(updateType, update);
+        this._pointNewPresenter.setSaving();
+        this._api.addPoint(update).then((response) => {
+          this._pointsModel.addPoint(updateType, response);
+        });
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deletePoint(updateType, update);
+        this._pointPresenter[update.id].setViewState(State.DELETING);
+        this._api.deletePoint(update).then(() => {
+          this._pointsModel.deletePoint(updateType, update);
+        });
         break;
     }
   }
@@ -128,13 +135,6 @@ export default class Trip {
     this._renderPointList();
   }
 
-  // destroy() {
-  //   this._clearTrip();
-  //
-  //   this._pointsModel.removeObserver(this._handleModelEvent);
-  //   this._filterModel.removeObserver(this._handleModelEvent);
-  // }
-
   show(resetSort = true) {
     this._tripContainer.classList.remove(`visually-hidden`);
 
@@ -186,7 +186,8 @@ export default class Trip {
     const destinations = Object.assign({}, this._destinationsModel.getDestinations());
 
     const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModeChange);
-    pointPresenter.init(point, offers, destinations);
+    const isDataLoaded = this._isOffersLoad && this._isDestinationLoad;
+    pointPresenter.init(point, offers, destinations, isDataLoaded);
 
     this._pointPresenter[point.id] = pointPresenter;
   }

@@ -82,8 +82,7 @@ export default class Points extends Observer {
   static adaptToServer(point) {
     const clone = Object.assign({}, point);
 
-    return {
-      "id": clone.id,
+    const adaptedPoint = {
       "type": clone.pointType.toLowerCase(),
       "date_from": clone.date.start,
       "date_to": clone.date.end,
@@ -94,10 +93,13 @@ export default class Points extends Observer {
       },
       "base_price": clone.price,
       "is_favorite": clone.isFavorite,
-      "offers": clone.offers.map((item) => {
-        delete item.id;
-        return item;
-      }),
+      "offers": clone.offers,
     };
+
+    if (clone.id !== null) {
+      adaptedPoint.id = clone.id;
+    }
+
+    return adaptedPoint;
   }
 }

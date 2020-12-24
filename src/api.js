@@ -24,14 +24,15 @@ export default class Api {
       .then((points) => points.map(PointModel.adaptToClient));
   }
 
-  getOffers() {
-    return this._load({url: `offers`})
-      .then(Api.toJson);
-  }
-
-  getDestinations() {
-    return this._load({url: `destinations`})
-      .then(Api.toJson);
+  addPoint(point) {
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(PointModel.adaptToServer(point)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJson)
+      .then((newPoint) => PointModel.adaptToClient(newPoint));
   }
 
   updatePoint(point) {
@@ -43,6 +44,23 @@ export default class Api {
     })
       .then(Api.toJson)
       .then((updatedPoint) => PointModel.adaptToClient(updatedPoint));
+  }
+
+  deletePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: Method.DELETE,
+    });
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then(Api.toJson);
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJson);
   }
 
   _load({

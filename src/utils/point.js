@@ -29,14 +29,14 @@ export const sortByPrice = (pointA, pointB) => {
 };
 
 export const sortByTime = (pointA, pointB) => {
-  const durationPointA = pointA.date.end - pointA.date.start;
-  const durationPointB = pointB.date.end - pointB.date.start;
+  const durationPointA = new Date(pointA.date.end) - new Date(pointA.date.start);
+  const durationPointB = new Date(pointB.date.end) - new Date(pointB.date.start);
 
   return durationPointA > durationPointB ? -1 : 1;
 };
 
 export const sortByDate = (pointA, pointB) => {
-  return pointA.date.start - pointB.date.start;
+  return new Date(pointA.date.start) - new Date(pointB.date.start);
 };
 
 export const formatPointFormDate = (date) => {

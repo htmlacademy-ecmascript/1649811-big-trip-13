@@ -78,12 +78,14 @@ const createPointTemplate = (point) => {
 };
 
 export default class Point extends AbstractView {
-  constructor(point) {
+  constructor(point, enableEditButton = true) {
     super();
     this._point = point;
 
     this._editButton = this.getElement().querySelector(`.event__rollup-btn`);
-    this._editButton.disabled = true;
+    if (!enableEditButton) {
+      this._editButton.disabled = true;
+    }
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
