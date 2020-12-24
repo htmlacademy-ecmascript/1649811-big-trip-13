@@ -48,10 +48,13 @@ export const MenuItem = {
 
 export const State = {
   SAVING: `SAVING`,
-  DELETING: `DELETING`
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
 };
 
 export const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`
 };
+
+export const SHAKE_ANIMATION_TIMEOUT = 600;
