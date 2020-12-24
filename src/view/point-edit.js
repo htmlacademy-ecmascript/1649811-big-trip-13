@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import {formatPointFormDate} from "../utils/point";
+import {showErrorMessage} from "../utils/point-form";
 import SmartView from "./smart";
 
 import "flatpickr/dist/themes/material_blue.css";
@@ -216,13 +217,14 @@ const createPointFormTemplate = (data, offers, destinations) => {
 };
 
 export default class PointEdit extends SmartView {
-  constructor(point, offers, destinations) {
+  constructor(point, offers, destinations, escKeyDownHandler) {
     super();
 
     this._offers = Object.assign({}, offers);
     this._destinations = Object.assign({}, destinations);
     this._data = this._parsePointToData(point);
     this._datepicker = null;
+    this._escKeyDownHandler = escKeyDownHandler;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -253,23 +255,28 @@ export default class PointEdit extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
 
-    // Нужны какие-то предупреждения
+    let errorMessage = ``;
 
     if (!(this._data.destination in this._destinations)) {
-      // eslint-disable-next-line no-alert
-      alert(`Destination not selected`);
-      return;
+      errorMessage = `<p>Destination not selected.</p>`;
     }
-    if (!this._data.date.start || !this._data.date.end) {
-      // eslint-disable-next-line no-alert
-      alert(`No dates selected`);
-      return;
+
+    if (!this._data.date.start) {
+      errorMessage += `<p>No start date selected.</p>`;
+    }
+
+    if (!this._data.date.end) {
+      errorMessage += `<p>No end date selected.</p>`;
     }
     if (this._data.date.start > this._data.date.end) {
-      // eslint-disable-next-line no-alert
-      alert(`Error date interval`);
+      errorMessage += `<p>Start date cannot be greater than end date</p>`;
+    }
+
+    if (errorMessage.length) {
+      showErrorMessage(errorMessage, this._escKeyDownHandler);
       return;
     }
+
     this._callback.formSubmit(this._parseDataToPoint(this._data));
   }
 
@@ -401,9 +408,7 @@ export default class PointEdit extends SmartView {
     let city = evt.target.value;
 
     if (!city || !(city in this._destinations)) {
-      evt.target.value = ``;
-      evt.target.placeholder = `Select city`;
-      evt.target.focus();
+      evt.target.value = this._data.destination;
       return;
     }
 

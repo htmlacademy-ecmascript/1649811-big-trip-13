@@ -28,7 +28,7 @@ export default class Point {
     const prevPointEditComponent = this._pointEditComponent;
 
     this._pointComponent = new PointView(point, isDataLoaded);
-    this._pointEditComponent = new PointEditView(point, offers, destinations);
+    this._pointEditComponent = new PointEditView(point, offers, destinations, this._escKeyDownHandler);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -46,7 +46,6 @@ export default class Point {
     }
 
     if (this._mode === Mode.EDITING) {
-      // replace(this._pointEditComponent, prevPointEditComponent);
       replace(this._pointComponent, prevPointEditComponent);
       this._mode = Mode.DEFAULT;
     }
@@ -97,7 +96,6 @@ export default class Point {
         UpdateType.MINOR,
         point
     );
-    // this._replaceFormToPoint();
   }
 
   _handleFormClose() {

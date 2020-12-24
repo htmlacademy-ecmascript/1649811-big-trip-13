@@ -1004,3 +1004,31 @@ main {
 .shake {
   animation: shake 0.6s;
 }
+
+.cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9000;
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  opacity: 0.3;
+}
+
+.error-message {
+  z-index: 9999;
+  position: absolute;
+  padding: 2em 2em 1em;
+  background-color: white;
+  color: brown;
+  cursor: pointer;
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+
+.ok-button {
+  display: block;
+  padding: .5em 1em;
+  margin: 2em auto .5em;
+}
