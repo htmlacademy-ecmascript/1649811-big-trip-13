@@ -43,7 +43,7 @@ const createPointTemplate = (point) => {
           ${dateStart}
       </time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${icon}" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${icon}" alt="${pointType}">
       </div>
       <h3 class="event__title">${destination}</h3>
       <div class="event__schedule">

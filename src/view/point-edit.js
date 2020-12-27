@@ -6,6 +6,12 @@ import SmartView from "./smart";
 import "flatpickr/dist/themes/material_blue.css";
 
 const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace|Tab$/;
+const isImageCached = (src) => {
+  const image = document.createElement(`img`);
+  image.src = src;
+
+  return image.complete || (image.width + image.height) > 0;
+};
 
 const createOfferItem = (offer, offers, isDisabled) => {
   const {title, price} = offer;
@@ -63,11 +69,12 @@ const createEventItem = (eventType, pointType) => {
 
 const createEventTypeTemplate = (pointType, types, isDisabled) => {
   const items = types.map((eventType) => createEventItem(eventType, pointType)).join(``);
+  const icon = `${pointType.toLowerCase()}.png`;
   return `
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${pointType.toLowerCase()}.png" alt="Event type icon">
+      <img class="event__type-icon" width="17" height="17" src="img/icons/${icon}" alt="${pointType}">
     </label>
     <input
       class="event__type-toggle
@@ -88,8 +95,9 @@ const createEventTypeTemplate = (pointType, types, isDisabled) => {
 };
 
 const createDestinationImagesTemplate = (images) => {
-  const items = images.map((image) => (
-    `<img class="event__photo" src="${image.src}" alt="${image.description}">`)).join(``);
+  const items = images.map((image) =>
+    `<img class="event__photo" src="${image.src}" alt="${image.description}">`
+  ).join(``);
   return `
   <div class="event__photos-container">
     <div class="event__photos-tape">
