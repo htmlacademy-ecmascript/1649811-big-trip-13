@@ -79,7 +79,11 @@ export default class Provider {
         });
     }
 
-    this._store.setItem(point.id, PointModel.adaptToServer(Object.assign({}, point)));
+    const id = point.id.includes(`new-point`)
+      ? point.id.slice(point.id.lastIndexOf(`-`) + 1)
+      : point.id;
+
+    this._store.setItem(id, PointModel.adaptToServer(Object.assign({}, point)));
     this._isSyncNeeded = true;
     return Promise.resolve(point);
   }
@@ -94,16 +98,15 @@ export default class Provider {
     }
 
     try {
-      const id = Math.max(
+      const nextId = Math.max(
           ...Object.keys(this._store.getItems())
           .map((item) => +item)
       ) + 1;
 
-      this._store.setItem(
-          id,
-          PointModel.adaptToServer(Object.assign({}, point, {id, isAdded: true})));
+      const newPoint = Object.assign({}, point, {id: `new-point-${nextId}`});
+      this._store.setItem(nextId, PointModel.adaptToServer(newPoint));
       this._isSyncNeeded = true;
-      return Promise.resolve(point);
+      return Promise.resolve(newPoint);
     } catch (err) {
       return Promise.reject(new Error(`Add point failed`));
     }
@@ -129,23 +132,21 @@ export default class Provider {
     if (this._isOnline()) {
       const storePoints = Object.values(this._store.getItems())
         .map((item) => {
-          if (item.isAdded) {
+          if (item.id.includes(`new-point`)) {
             delete item.id;
-            delete item.isAdded;
           }
           return item;
         });
 
       return this._api.sync(storePoints)
-        .then((response) => {
-          if (response.status === 200) {
-            this._api.getPoints()
-              .then((points) => {
-                const items = createStoreStructure(points.map(PointModel.adaptToServer));
-                this._store.setItems(items);
-                this._isSyncNeeded = false;
-              });
-          }
+        .then((points) => {
+
+          this._isSyncNeeded = false;
+
+          const items = createStoreStructure(points);
+          this._store.setItems(items);
+
+          return points.map(PointModel.adaptToClient);
         });
     }
 

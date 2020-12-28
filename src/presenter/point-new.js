@@ -57,7 +57,7 @@ export default class PointNew {
         UpdateType.MAJOR,
         point
     );
-    this.destroy();
+    // this.destroy();
   }
 
   _handleDeleteClick() {

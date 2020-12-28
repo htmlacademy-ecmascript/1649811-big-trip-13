@@ -86,7 +86,11 @@ export default class Api {
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.checkStatus)
+      .then(() => {
+        return this._load({url: `points`})
+          .then(Api.toJson);
+      });
   }
 
   static checkStatus(response) {

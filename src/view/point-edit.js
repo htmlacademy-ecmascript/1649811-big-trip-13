@@ -6,12 +6,6 @@ import SmartView from "./smart";
 import "flatpickr/dist/themes/material_blue.css";
 
 const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace|Tab$/;
-const isImageCached = (src) => {
-  const image = document.createElement(`img`);
-  image.src = src;
-
-  return image.complete || (image.width + image.height) > 0;
-};
 
 const createOfferItem = (offer, offers, isDisabled) => {
   const {title, price} = offer;

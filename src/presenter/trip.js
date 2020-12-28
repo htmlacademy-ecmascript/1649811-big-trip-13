@@ -28,7 +28,7 @@ export default class Trip {
     this._loadingComponent = new LoadingView();
     this._sortComponent = null;
     this._noPointComponent = null;
-    this._pointListComponent = null;
+    this._pointListComponent = new PointListView();
     this._pointNewPresenter = null;
 
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -44,7 +44,7 @@ export default class Trip {
     this._destinationsModel.addObserver(this._handleModelEvent);
 
     this._pointNewPresenter = new PointNewPresenter(
-        this._tripContainer, this._handleViewAction
+        this._pointListComponent, this._handleViewAction
     );
 
     this._renderTrip();
@@ -143,8 +143,10 @@ export default class Trip {
     }
 
     this._currentSortType = sortType;
-    this._clearPointList();
-    this._renderPointList();
+    // this._clearPointList();
+    // this._renderPointList();
+    this._clearTrip();
+    this._renderTrip();
   }
 
   show(resetSort = true) {
@@ -167,6 +169,12 @@ export default class Trip {
   createPoint(callback) {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
+
+    if (this._getPoints().length === 0) {
+      remove(this._noPointComponent);
+      render(this._tripContainer, this._pointListComponent, RenderPosition.BEFOREEND);
+    }
+
     this._pointNewPresenter.init(
         callback,
         this._offersModel.getOffers(),
@@ -205,7 +213,6 @@ export default class Trip {
   }
 
   _renderPointList() {
-    this._pointListComponent = new PointListView();
     render(this._tripContainer, this._pointListComponent, RenderPosition.BEFOREEND);
 
     const points = this._getPoints();
@@ -245,13 +252,13 @@ export default class Trip {
     this._renderPointList();
   }
 
-  _clearPointList() {
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.destroy());
-
-    this._pointPresenter = {};
-  }
+  // _clearPointList() {
+  //   Object
+  //     .values(this._pointPresenter)
+  //     .forEach((presenter) => presenter.destroy());
+  //
+  //   this._pointPresenter = {};
+  // }
 
   _clearTrip(resetSortType = false) {
     Object

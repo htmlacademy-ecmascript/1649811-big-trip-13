@@ -100,6 +100,10 @@ window.addEventListener(`offline`, () => {
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
   if (apiWithProvider.isSyncNeeded) {
-    apiWithProvider.sync().then();
+    apiWithProvider
+      .sync()
+      .then((points) => {
+        pointsModel.setPoints(UpdateType.MINOR, points);
+      });
   }
 });
