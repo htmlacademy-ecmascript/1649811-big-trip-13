@@ -155,5 +155,4 @@ export default class Point {
     remove(this._pointComponent);
     remove(this._pointEditComponent);
   }
-
 }

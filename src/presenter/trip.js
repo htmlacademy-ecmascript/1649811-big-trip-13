@@ -143,8 +143,6 @@ export default class Trip {
     }
 
     this._currentSortType = sortType;
-    // this._clearPointList();
-    // this._renderPointList();
     this._clearTrip();
     this._renderTrip();
   }
@@ -251,14 +249,6 @@ export default class Trip {
     this._renderSort();
     this._renderPointList();
   }
-
-  // _clearPointList() {
-  //   Object
-  //     .values(this._pointPresenter)
-  //     .forEach((presenter) => presenter.destroy());
-  //
-  //   this._pointPresenter = {};
-  // }
 
   _clearTrip(resetSortType = false) {
     Object

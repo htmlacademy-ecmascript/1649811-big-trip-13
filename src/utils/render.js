@@ -14,10 +14,6 @@ export const createElement = (template) => {
   return newElement.firstElementChild;
 };
 
-export const renderTemplate = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 export const render = (container, element, place) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
