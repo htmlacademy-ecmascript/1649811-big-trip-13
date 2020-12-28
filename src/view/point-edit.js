@@ -103,7 +103,7 @@ const createDestinationImagesTemplate = (images) => {
 
 const createDestinationTemplate = (destination, info) => {
   const {description, images} = info;
-  const imageTemplate = (images.length > 0) ? createDestinationImagesTemplate(images) : ``;
+  const imageTemplate = (images.length > 0 && window.navigator.onLine) ? createDestinationImagesTemplate(images) : ``;
   return `
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">${destination}</h3>

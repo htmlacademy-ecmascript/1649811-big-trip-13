@@ -1,10 +1,6 @@
 import dayjs from "dayjs";
-
-const defaultTrip = {
-  title: `No travel`,
-  price: 0,
-  date: ``,
-};
+import {sortByDate} from "./point";
+import {EMPTY_TRIP_INFO} from "../const";
 
 const createTitle = (points) => {
   const length = points.length;
@@ -38,11 +34,14 @@ const createDate = (points) => {
 
 export const createTripInfo = (points) => {
   if (points.length === 0) {
-    return defaultTrip;
+    return EMPTY_TRIP_INFO;
   }
+
+  const sortedPoints = points.slice().sort(sortByDate);
+
   return {
-    title: createTitle(points),
-    price: createPrice(points),
-    date: createDate(points)
+    title: createTitle(sortedPoints),
+    price: createPrice(sortedPoints),
+    date: createDate(sortedPoints)
   };
 };

@@ -58,3 +58,21 @@ export const Mode = {
 };
 
 export const SHAKE_ANIMATION_TIMEOUT = 600;
+
+export const EMPTY_TRIP_INFO = {
+  title: `No travel`,
+  price: 0,
+  date: ``,
+};
+
+export const Method = {
+  GET: `GET`,
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
+};
+
+export const SuccessHttpStatusRange = {
+  MIN: 200,
+  MAX: 299
+};
