@@ -9,7 +9,7 @@ const priceKeyDownRegex = /^[0-9]|ArrowLeft|ArrowRight|Delete|Backspace|Tab$/;
 
 const createOfferItem = (offer, offers, isDisabled) => {
   const {title, price} = offer;
-  const id = title.split(` `).join(`-`);
+  const id = title.split(` `).join(`_`);
   const checked = offers.find((item) => item.title === title) ? `checked` : ``;
 
   return `
@@ -376,7 +376,7 @@ export default class PointEdit extends SmartView {
       return;
     }
 
-    const title = target.getAttribute(`for`).split(`-`).join(` `);
+    const title = target.getAttribute(`for`).split(`_`).join(` `);
 
     const offers = this._data.offers.slice();
     const index = offers.findIndex((item) => item.title === title);
@@ -398,10 +398,11 @@ export default class PointEdit extends SmartView {
     if (!target) {
       return;
     }
-
     const pointType = target.textContent;
 
-    const availableOffers = pointType in this._offers
+    const availableOffers = (
+      Object.keys(this._offers).length && this._offers[pointType].length
+    )
       ? this._offers[pointType]
       : null;
 
