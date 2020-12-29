@@ -1,18 +1,3 @@
-export const DEFAULT_POINT_TYPE = `Flight`;
-
-export const EMPTY_POINT = {
-  pointType: DEFAULT_POINT_TYPE,
-  destination: ``,
-  offers: [],
-  price: ``,
-  date: {
-    start: null,
-    end: null,
-  },
-  isFavorite: false,
-  info: null,
-};
-
 export const FilterType = {
   DEFAULT: `Everything`,
   FUTURE: `Future`,
@@ -55,14 +40,6 @@ export const State = {
 export const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`
-};
-
-export const SHAKE_ANIMATION_TIMEOUT = 600;
-
-export const EMPTY_TRIP_INFO = {
-  title: `No travel`,
-  price: 0,
-  date: ``,
 };
 
 export const Method = {

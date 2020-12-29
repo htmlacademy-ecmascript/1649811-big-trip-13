@@ -1,27 +1,26 @@
-export const showErrorMessage = (messageHtml, escKeyDownHandler) => {
-  let coverDiv = document.createElement(`div`);
-  coverDiv.className = `cover`;
+const coverDiv = document.createElement(`div`);
+coverDiv.className = `cover`;
 
-  let messageDiv = document.createElement(`div`);
-  messageDiv.className = `error-message`;
+const messageDiv = document.createElement(`div`);
+messageDiv.className = `error-message`;
+
+export const modal = (messageHtml, escKeyDownHandler) => {
   messageHtml += `<button class="ok-button">OK</button>`;
   messageDiv.innerHTML = messageHtml;
 
-  document.body.append(messageDiv);
   document.body.append(coverDiv);
+  document.body.append(messageDiv);
 
-  const sizingBox = messageDiv.getBoundingClientRect();
+  const {width} = messageDiv.getBoundingClientRect();
   messageDiv.style.top = `20%`;
-  messageDiv.style.left = `${window.innerWidth / 2 - sizingBox.width / 2}px`;
+  messageDiv.style.left = `${window.innerWidth / 2 - width / 2}px`;
 
   const removeErrorMessage = () => {
-    coverDiv.remove();
-    messageDiv.remove();
-    coverDiv = null;
-    messageDiv = null;
-    document.removeEventListener(`click`, clickHandler);
+    messageDiv.removeEventListener(`click`, clickHandler);
     document.removeEventListener(`click`, newEscKeyDownHandler);
     document.addEventListener(`keydown`, escKeyDownHandler);
+    coverDiv.remove();
+    messageDiv.remove();
   };
 
   const newEscKeyDownHandler = (evt) => {
@@ -38,5 +37,5 @@ export const showErrorMessage = (messageHtml, escKeyDownHandler) => {
 
   document.removeEventListener(`keydown`, escKeyDownHandler);
   document.addEventListener(`keydown`, newEscKeyDownHandler);
-  document.addEventListener(`click`, clickHandler);
+  messageDiv.addEventListener(`click`, clickHandler);
 };

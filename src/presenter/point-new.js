@@ -1,6 +1,21 @@
 import PointEditView from "../view/point-edit";
-import {EMPTY_POINT, UpdateType, UserAction} from "../const";
+import {UpdateType, UserAction} from "../const";
 import {remove, render, RenderPosition} from "../utils/render";
+
+const DEFAULT_POINT_TYPE = `Flight`;
+
+const EMPTY_POINT = {
+  pointType: DEFAULT_POINT_TYPE,
+  destination: ``,
+  offers: [],
+  price: ``,
+  date: {
+    start: null,
+    end: null,
+  },
+  isFavorite: false,
+  info: null,
+};
 
 export default class PointNew {
   constructor(pointListContainer, changeData) {

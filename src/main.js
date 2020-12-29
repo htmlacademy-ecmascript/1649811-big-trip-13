@@ -7,17 +7,23 @@ import OffersModel from "./model/offers";
 import DestinationsModel from "./model/destinations";
 import SiteMenuView from "./view/site-menu";
 import StatisticsView from "./view/statistics";
-import {RenderPosition, render} from "./utils/render";
-import {MenuItem, UpdateType} from "./const";
 import Api from "./api/api";
 import Store from "./api/store";
 import Provider from "./api/provider";
+import {RenderPosition, render} from "./utils/render";
+import {MenuItem, UpdateType} from "./const";
 
 const AUTHORIZATION = `Basic g2oty990ik29834vfr`;
 const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
+const bodyElement = document.querySelector(`.page-body`);
+const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
+const tripElement = bodyElement.querySelector(`.page-main section.trip-events`);
+const menuHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden`);
+const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const store = new Store(STORE_NAME, window.localStorage);
@@ -27,12 +33,6 @@ const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
-
-const bodyElement = document.querySelector(`.page-body`);
-const tripInfoElement = bodyElement.querySelector(`.page-header .trip-main`);
-const tripElement = bodyElement.querySelector(`.page-main section.trip-events`);
-const menuHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden`);
-const filterHeaderElement = tripInfoElement.querySelector(`h2.visually-hidden:last-child`);
 
 const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 const tripPresenter = new TripPresenter(

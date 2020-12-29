@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
 import {sortByDate} from "./point";
-import {EMPTY_TRIP_INFO} from "../const";
+
+const EMPTY_TRIP_INFO = {
+  title: `No travel`,
+  price: 0,
+  date: ``,
+};
 
 const createTitle = (points) => {
   const length = points.length;

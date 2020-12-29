@@ -1,5 +1,6 @@
 import {createElement} from "../utils/render";
-import {SHAKE_ANIMATION_TIMEOUT} from "../const";
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export default class Abstract {
   constructor() {
@@ -25,7 +26,6 @@ export default class Abstract {
   removeElement() {
     this._element = null;
   }
-
   show() {
     this.getElement().classList.remove(`visually-hidden`);
   }

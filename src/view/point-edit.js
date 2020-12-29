@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import {formatPointFormDate} from "../utils/point";
-import {showErrorMessage} from "../utils/modal";
+import {modal} from "../utils/modal";
 import SmartView from "./smart";
 
 import "flatpickr/dist/themes/material_blue.css";
@@ -277,7 +277,7 @@ export default class PointEdit extends SmartView {
     }
 
     if (errorMessage.length) {
-      showErrorMessage(errorMessage, this._escKeyDownHandler);
+      modal(errorMessage, this._escKeyDownHandler);
       return;
     }
 
