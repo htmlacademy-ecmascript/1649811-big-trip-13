@@ -23,7 +23,7 @@ export default class Filter {
 
   init() {
     const prevFilterComponent = this._filterComponent;
-    this._filterComponent = new FilterView(this._filters, this._currentFilter);
+    this._filterComponent = new FilterView(this._filters, this._currentFilterType);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
@@ -35,15 +35,20 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  _getFilters() {
+    const points = this._pointsModel.getPoints();
+
+    return Object.keys(filter).reduce((acc, key) => {
+      return Object.assign({}, acc, {[key]: filter[key](points)});
+    }, {});
+  }
+
   _handleModelEvent() {
-    this._currentFilter = this._filterModel.getFilter();
+    this._currentFilterType = this._filterModel.getFilter();
     this._filters = this._getFilters();
 
-    const pointsCount = this._filters
-      .find((item) => item.name === this._currentFilter)
-      .points.length;
-
-    if (this._currentFilter !== FilterType.DEFAULT && pointsCount === 0) {
+    if (this._currentFilterType !== FilterType.DEFAULT
+      && this._filters[this._currentFilterType].length === 0) {
       this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
       return;
     }
@@ -52,23 +57,11 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._currentFilter === filterType) {
+    if (this._currentFilterType === filterType) {
       return;
     }
 
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
-  }
-
-  _getFilters() {
-    const points = this._pointsModel.getPoints();
-
-    return Object.entries(filter)
-      .map(([filterName, filterPoints]) => {
-        return {
-          name: filterName,
-          points: filterPoints(points),
-        };
-      });
   }
 }
 
