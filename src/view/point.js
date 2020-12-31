@@ -95,16 +95,6 @@ export default class Point extends AbstractView {
     return createPointTemplate(this._point);
   }
 
-  _editClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.editClick();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this._editButton.addEventListener(`click`, this._editClickHandler);
@@ -119,5 +109,15 @@ export default class Point extends AbstractView {
 
   enableEditButton() {
     this._editButton.disabled = false;
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 }

@@ -1,41 +1,41 @@
-const coverDiv = document.createElement(`div`);
-coverDiv.className = `cover`;
+const coverElement = document.createElement(`div`);
+coverElement.classList.add(`cover`);
 
-const messageDiv = document.createElement(`div`);
-messageDiv.className = `error-message`;
+const messageElement = document.createElement(`div`);
+messageElement.classList.add(`error-message`);
 
 export const modal = (messageHtml, escKeyDownHandler) => {
   messageHtml += `<button class="ok-button">OK</button>`;
-  messageDiv.innerHTML = messageHtml;
+  messageElement.innerHTML = messageHtml;
 
-  document.body.append(coverDiv);
-  document.body.append(messageDiv);
+  document.body.append(coverElement);
+  document.body.append(messageElement);
 
-  const {width} = messageDiv.getBoundingClientRect();
-  messageDiv.style.top = `20%`;
-  messageDiv.style.left = `${window.innerWidth / 2 - width / 2}px`;
+  const {width} = messageElement.getBoundingClientRect();
+  messageElement.style.top = `20%`;
+  messageElement.style.left = `${window.innerWidth / 2 - width / 2}px`;
 
-  const removeErrorMessage = () => {
-    messageDiv.removeEventListener(`click`, clickHandler);
+  const destroy = () => {
+    messageElement.removeEventListener(`click`, messageClickHandler);
     document.removeEventListener(`click`, newEscKeyDownHandler);
     document.addEventListener(`keydown`, escKeyDownHandler);
-    coverDiv.remove();
-    messageDiv.remove();
+    coverElement.remove();
+    messageElement.remove();
   };
 
   const newEscKeyDownHandler = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
 
-      removeErrorMessage();
+      destroy();
     }
   };
 
-  const clickHandler = () => {
-    removeErrorMessage();
+  const messageClickHandler = () => {
+    destroy();
   };
 
   document.removeEventListener(`keydown`, escKeyDownHandler);
   document.addEventListener(`keydown`, newEscKeyDownHandler);
-  messageDiv.addEventListener(`click`, clickHandler);
+  messageElement.addEventListener(`click`, messageClickHandler);
 };

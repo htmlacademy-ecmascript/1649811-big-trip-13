@@ -53,3 +53,10 @@ export const SuccessHttpStatusRange = {
   MIN: 200,
   MAX: 299
 };
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTER: `after`,
+  BEFORE: `before`,
+};

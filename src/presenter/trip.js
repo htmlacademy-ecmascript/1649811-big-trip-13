@@ -4,8 +4,8 @@ import NoPointView from "../view/no-point";
 import PointPresenter from "./point";
 import PointNewPresenter from "./point-new";
 import LoadingView from "../view/loading";
-import {FilterType, SortType, UpdateType, UserAction, State} from "../const";
-import {RenderPosition, render, remove} from "../utils/render";
+import {FilterType, SortType, UpdateType, UserAction, State, RenderPosition} from "../const";
+import {render, remove} from "../utils/render";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/point";
 import {filter} from "../utils/filter";
 

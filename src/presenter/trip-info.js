@@ -1,7 +1,7 @@
 import TripInfoView from "../view/trip-info";
-import {render, remove, RenderPosition} from "../utils/render";
+import {render, remove} from "../utils/render";
 import {createTripInfo} from "../utils/trip-info";
-import {UpdateType} from "../const";
+import {RenderPosition, UpdateType} from "../const";
 
 export default class TripInfo {
   constructor(tripInfoContainer, pointsModel) {

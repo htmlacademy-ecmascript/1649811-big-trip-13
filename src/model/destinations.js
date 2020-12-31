@@ -5,13 +5,13 @@ export default class Destinations extends Observer {
     super();
   }
 
+  getDestinations() {
+    return this._destinations;
+  }
+
   setDestination(updateType, destinations) {
     this._destinations = this._adaptDestinations(destinations);
     this._notify(updateType);
-  }
-
-  getDestinations() {
-    return this._destinations;
   }
 
   _adaptDestinations(destinations) {

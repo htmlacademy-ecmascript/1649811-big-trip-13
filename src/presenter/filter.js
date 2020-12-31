@@ -1,7 +1,7 @@
-import {UpdateType, FilterType} from "../const";
+import {UpdateType, FilterType, RenderPosition} from "../const";
 import {filter} from "../utils/filter";
 import FilterView from "../view/filter";
-import {RenderPosition, render, replace, remove} from "../utils/render";
+import {render, replace, remove} from "../utils/render";
 
 export default class Filter {
   constructor(filterHeaderElement, pointsModel, filterModel) {
@@ -9,7 +9,7 @@ export default class Filter {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
 
-    this._currentFilter = this._filterModel.getFilter();
+    this._currentFilterType = this._filterModel.getFilter();
     this._filters = this._getFilters();
 
     this._filterComponent = null;
@@ -50,6 +50,7 @@ export default class Filter {
     if (this._currentFilterType !== FilterType.DEFAULT
       && this._filters[this._currentFilterType].length === 0) {
       this._filterModel.setFilter(UpdateType.MAJOR, FilterType.DEFAULT);
+
       return;
     }
 

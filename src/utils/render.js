@@ -1,11 +1,5 @@
 import AbstractView from "../view/abstract";
-
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTER: `after`,
-  BEFORE: `before`,
-};
+import {RenderPosition} from "../const";
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);

@@ -1,7 +1,7 @@
 import PointEditView from "../view/point-edit";
 import PointView from "../view/point";
-import {remove, render, replace, RenderPosition} from "../utils/render";
-import {UserAction, UpdateType, Mode, State} from "../const";
+import {remove, render, replace} from "../utils/render";
+import {UserAction, UpdateType, Mode, State, RenderPosition} from "../const";
 
 export default class Point {
   constructor(pointListContainer, changeData, changeMode) {

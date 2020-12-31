@@ -7,14 +7,24 @@ export default class Points extends Observer {
     this._points = [];
   }
 
+  getPoints() {
+    return this._points;
+  }
+
   setPoints(UpdateType, points) {
     this._points = points.slice();
 
     this._notify(UpdateType);
   }
 
-  getPoints() {
-    return this._points;
+  addPoint(updateType, update) {
+
+    this._points = [
+      update,
+      ...this._points
+    ];
+
+    this._notify(updateType, update);
   }
 
   updatePoint(updateType, update) {
@@ -28,16 +38,6 @@ export default class Points extends Observer {
       ...this._points.slice(0, index),
       update,
       ...this._points.slice(index + 1)
-    ];
-
-    this._notify(updateType, update);
-  }
-
-  addPoint(updateType, update) {
-
-    this._points = [
-      update,
-      ...this._points
     ];
 
     this._notify(updateType, update);

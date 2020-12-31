@@ -10,8 +10,8 @@ import StatisticsView from "./view/statistics";
 import Api from "./api/api";
 import Store from "./api/store";
 import Provider from "./api/provider";
-import {RenderPosition, render} from "./utils/render";
-import {MenuItem, UpdateType} from "./const";
+import {render} from "./utils/render";
+import {MenuItem, RenderPosition, UpdateType} from "./const";
 
 const AUTHORIZATION = `Basic g2oty990ik29834vfr`;
 const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;

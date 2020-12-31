@@ -1,6 +1,6 @@
 import PointEditView from "../view/point-edit";
-import {UpdateType, UserAction} from "../const";
-import {remove, render, RenderPosition} from "../utils/render";
+import {RenderPosition, UpdateType, UserAction} from "../const";
+import {remove, render} from "../utils/render";
 
 const DEFAULT_POINT_TYPE = `Flight`;
 
@@ -66,6 +66,21 @@ export default class PointNew {
     this._pointEditComponent.shake(resetFormState);
   }
 
+  destroy() {
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
+    }
+
+    if (this._pointEditComponent === null) {
+      return;
+    }
+
+    remove(this._pointEditComponent);
+    this._pointEditComponent = null;
+
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
         UserAction.ADD_POINT,
@@ -87,20 +102,5 @@ export default class PointNew {
       evt.preventDefault();
       this.destroy();
     }
-  }
-
-  destroy() {
-    if (this._destroyCallback !== null) {
-      this._destroyCallback();
-    }
-
-    if (this._pointEditComponent === null) {
-      return;
-    }
-
-    remove(this._pointEditComponent);
-    this._pointEditComponent = null;
-
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 }

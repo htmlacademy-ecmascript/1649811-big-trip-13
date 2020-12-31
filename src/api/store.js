@@ -19,16 +19,6 @@ export default class Store {
     }
   }
 
-  setItems(items, key = null) {
-    if (key === null) {
-      key = this._storeKey;
-    }
-    this._storage.setItem(
-        key,
-        JSON.stringify(items)
-    );
-  }
-
   setItem(key, value) {
     const store = this.getItems();
 
@@ -50,6 +40,17 @@ export default class Store {
     this._storage.setItem(
         this._storeKey,
         JSON.stringify(store)
+    );
+  }
+
+
+  setItems(items, key = null) {
+    if (key === null) {
+      key = this._storeKey;
+    }
+    this._storage.setItem(
+        key,
+        JSON.stringify(items)
     );
   }
 }

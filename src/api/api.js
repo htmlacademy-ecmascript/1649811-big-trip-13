@@ -13,6 +13,16 @@ export default class Api {
       .then((points) => points.map(PointModel.adaptToClient));
   }
 
+  getOffers() {
+    return this._load({url: `offers`})
+      .then(Api.toJson);
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJson);
+  }
+
   addPoint(point) {
     return this._load({
       url: `points`,
@@ -42,14 +52,18 @@ export default class Api {
     });
   }
 
-  getOffers() {
-    return this._load({url: `offers`})
-      .then(Api.toJson);
-  }
-
-  getDestinations() {
-    return this._load({url: `destinations`})
-      .then(Api.toJson);
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.checkStatus)
+      .then(() => {
+        return this._load({url: `points`})
+          .then(Api.toJson);
+      });
   }
 
   _load({
@@ -66,20 +80,6 @@ export default class Api {
     )
       .then(Api.checkStatus)
       .catch(Api.catchError);
-  }
-
-  sync(data) {
-    return this._load({
-      url: `points/sync`,
-      method: Method.POST,
-      body: JSON.stringify(data),
-      headers: new Headers({"Content-Type": `application/json`})
-    })
-      .then(Api.checkStatus)
-      .then(() => {
-        return this._load({url: `points`})
-          .then(Api.toJson);
-      });
   }
 
   static checkStatus(response) {

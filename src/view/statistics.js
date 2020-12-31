@@ -242,29 +242,17 @@ export default class Statistics extends SmartView {
     this._timeChart = null;
   }
 
-  init(points) {
-    this._data = Object.assign({}, points);
-    this.updateElement();
-  }
-
-  _removeCharts() {
-    if (
-      this._moneyChart !== null ||
-      this._typeChart !== null ||
-      this._timeChart !== null
-    ) {
-      this._moneyChart = null;
-      this._typeChart = null;
-      this._timeChart = null;
-    }
+  getTemplate() {
+    return createStatisticsTemplate();
   }
 
   restoreHandlers() {
     this._setCharts();
   }
 
-  getTemplate() {
-    return createStatisticsTemplate();
+  init(points) {
+    this._data = Object.assign({}, points);
+    this.updateElement();
   }
 
   _setCharts() {
@@ -286,5 +274,17 @@ export default class Statistics extends SmartView {
     this._moneyChart = renderMoneyChart(this._moneyCtx, labels, moneys);
     this._typeChart = renderTypeChart(this._typeCtx, labels, countTypes);
     this._timeChart = renderTimeChart(this._timeCtx, labels, countDays);
+  }
+
+  _removeCharts() {
+    if (
+      this._moneyChart !== null ||
+      this._typeChart !== null ||
+      this._timeChart !== null
+    ) {
+      this._moneyChart = null;
+      this._typeChart = null;
+      this._timeChart = null;
+    }
   }
 }

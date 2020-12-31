@@ -256,41 +256,12 @@ export default class PointEdit extends SmartView {
     }
   }
 
-  _formSubmitHandler(evt) {
-    evt.preventDefault();
-
-    let errorMessage = ``;
-
-    if (!(this._data.destination in this._destinations)) {
-      errorMessage = `<p>Destination not selected.</p>`;
-    }
-
-    if (!this._data.date.start) {
-      errorMessage += `<p>No start date selected.</p>`;
-    }
-
-    if (!this._data.date.end) {
-      errorMessage += `<p>No end date selected.</p>`;
-    }
-    if (this._data.date.start > this._data.date.end) {
-      errorMessage += `<p>Start date cannot be greater than end date</p>`;
-    }
-
-    if (errorMessage.length) {
-      modal(errorMessage, this._escKeyDownHandler);
-      return;
-    }
-
-    this._callback.formSubmit(this._parseDataToPoint(this._data));
-  }
-
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteClick(this._parsePointToData(this._data));
-  }
-
-  _formCloseHandler() {
-    this._callback.formClose();
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setDatepicker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormCloseHandler(this._callback.formClose);
+    this.setFormDeleteHandler(this._callback.deleteClick);
   }
 
   setFormDeleteHandler(callback) {
@@ -311,8 +282,11 @@ export default class PointEdit extends SmartView {
       .addEventListener(`click`, this._formCloseHandler);
   }
 
-  _parsePointToData(point) {
+  reset(point) {
+    this.updateData(this._parsePointToData(point));
+  }
 
+  _parsePointToData(point) {
     const availableOffers = (Object.keys(this._offers).length &&
       this._offers[point.pointType].length)
       ? this._offers[point.pointType]
@@ -343,12 +317,35 @@ export default class PointEdit extends SmartView {
     return data;
   }
 
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this._setDatepicker();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setFormCloseHandler(this._callback.formClose);
-    this.setFormDeleteHandler(this._callback.deleteClick);
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._deleteDatePicker();
+    }
+
+    const [startDate, endDate] = Array.from(
+        this.getElement().querySelectorAll(`.event__input--time`)
+    );
+
+    this._datepicker = {
+      start: flatpickr(startDate, {
+        enableTime: true,
+        dateFormat: `d/m/y H:i`,
+        defaultsDate: this._data.date.start,
+        onChange: this._dateStartChangeHandler,
+      }),
+      end: flatpickr(endDate, {
+        enableTime: true,
+        dateFormat: `d/m/y H:i`,
+        defaultsDate: this._data.date.end,
+        onChange: this._dateEndChangeHandler,
+      }),
+    };
+  }
+
+  _deleteDatePicker() {
+    this._datepicker.start.destroy();
+    this._datepicker.end.destroy();
+    this._datepicker = null;
   }
 
   _setInnerHandlers() {
@@ -448,38 +445,40 @@ export default class PointEdit extends SmartView {
     this.updateData({price}, true);
   }
 
-  reset(point) {
-    this.updateData(this._parsePointToData(point));
-  }
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
 
-  _deleteDatePicker() {
-    this._datepicker.start.destroy();
-    this._datepicker.end.destroy();
-    this._datepicker = null;
-  }
+    let errorMessage = ``;
 
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._deleteDatePicker();
+    if (!(this._data.destination in this._destinations)) {
+      errorMessage = `<p>Destination not selected.</p>`;
     }
 
-    const [startDate, endDate] = Array.from(
-        this.getElement().querySelectorAll(`.event__input--time`)
-    );
+    if (!this._data.date.start) {
+      errorMessage += `<p>No start date selected.</p>`;
+    }
 
-    this._datepicker = {
-      start: flatpickr(startDate, {
-        enableTime: true,
-        dateFormat: `d/m/y H:i`,
-        defaultsDate: this._data.date.start,
-        onChange: this._dateStartChangeHandler,
-      }),
-      end: flatpickr(endDate, {
-        enableTime: true,
-        dateFormat: `d/m/y H:i`,
-        defaultsDate: this._data.date.end,
-        onChange: this._dateEndChangeHandler,
-      }),
-    };
+    if (!this._data.date.end) {
+      errorMessage += `<p>No end date selected.</p>`;
+    }
+    if (this._data.date.start > this._data.date.end) {
+      errorMessage += `<p>Start date cannot be greater than end date</p>`;
+    }
+
+    if (errorMessage.length) {
+      modal(errorMessage, this._escKeyDownHandler);
+      return;
+    }
+
+    this._callback.formSubmit(this._parseDataToPoint(this._data));
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._parsePointToData(this._data));
+  }
+
+  _formCloseHandler() {
+    this._callback.formClose();
   }
 }

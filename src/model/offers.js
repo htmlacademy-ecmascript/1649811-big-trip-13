@@ -5,13 +5,13 @@ export default class Offers extends Observer {
     super();
   }
 
+  getOffers() {
+    return this._offers;
+  }
+
   setOffers(updateType, offers) {
     this._offers = this._adaptOffers(offers);
     this._notify((updateType));
-  }
-
-  getOffers() {
-    return this._offers;
   }
 
   _adaptOffers(offers) {

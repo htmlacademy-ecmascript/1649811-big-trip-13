@@ -20,24 +20,14 @@ export default class SiteMenu extends AbstractView {
     this.enableAddPointButton = this.enableAddPointButton.bind(this);
   }
 
-  _menuClickHandler(evt) {
-    let target = evt.target.closest(`button`);
-    if (target) {
-      evt.preventDefault();
-      this._addPointButton.disabled = true;
-      this._setMenuItemTable();
-      this._callback.menuClick(target.textContent);
-      return;
-    }
+  getTemplate() {
+    return createMenuTemplate();
+  }
 
-    target = evt.target.closest(`a`);
-    if (!target) {
-      return;
-    }
-
-    evt.preventDefault();
-    this._setMenuItem(target);
-    this._callback.menuClick(target.textContent);
+  setMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
+    this.getElement().addEventListener(`click`, this._menuClickHandler);
+    this._addPointButton.addEventListener(`click`, this._menuClickHandler);
   }
 
   enableAddPointButton() {
@@ -59,13 +49,23 @@ export default class SiteMenu extends AbstractView {
     element.classList.add(`trip-tabs__btn--active`);
   }
 
-  setMenuClickHandler(callback) {
-    this._callback.menuClick = callback;
-    this.getElement().addEventListener(`click`, this._menuClickHandler);
-    this._addPointButton.addEventListener(`click`, this._menuClickHandler);
-  }
+  _menuClickHandler(evt) {
+    let target = evt.target.closest(`button`);
+    if (target) {
+      evt.preventDefault();
+      this._addPointButton.disabled = true;
+      this._setMenuItemTable();
+      this._callback.menuClick(target.textContent);
+      return;
+    }
 
-  getTemplate() {
-    return createMenuTemplate();
+    target = evt.target.closest(`a`);
+    if (!target) {
+      return;
+    }
+
+    evt.preventDefault();
+    this._setMenuItem(target);
+    this._callback.menuClick(target.textContent);
   }
 }

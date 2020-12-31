@@ -17,10 +17,6 @@ export default class Provider {
     return this._isSyncNeeded;
   }
 
-  _isOnline() {
-    return window.navigator.onLine;
-  }
-
   getPoints() {
     if (this._isOnline()) {
       return this._api.getPoints()
@@ -70,24 +66,6 @@ export default class Provider {
     return Promise.resolve(storeDestinations);
   }
 
-  updatePoint(point) {
-    if (this._isOnline()) {
-      return this._api.updatePoint(point)
-        .then((updatedPoint) => {
-          this._store.setItem(updatedPoint.id, PointModel.adaptToServer(updatedPoint));
-          return updatedPoint;
-        });
-    }
-
-    const id = point.id.includes(`new-point`)
-      ? point.id.slice(point.id.lastIndexOf(`-`) + 1)
-      : point.id;
-
-    this._store.setItem(id, PointModel.adaptToServer(Object.assign({}, point)));
-    this._isSyncNeeded = true;
-    return Promise.resolve(point);
-  }
-
   addPoint(point) {
     if (this._isOnline()) {
       return this._api.addPoint(point)
@@ -110,6 +88,24 @@ export default class Provider {
     } catch (err) {
       return Promise.reject(new Error(`Add point failed`));
     }
+  }
+
+  updatePoint(point) {
+    if (this._isOnline()) {
+      return this._api.updatePoint(point)
+        .then((updatedPoint) => {
+          this._store.setItem(updatedPoint.id, PointModel.adaptToServer(updatedPoint));
+          return updatedPoint;
+        });
+    }
+
+    const id = point.id.includes(`new-point`)
+      ? point.id.slice(point.id.lastIndexOf(`-`) + 1)
+      : point.id;
+
+    this._store.setItem(id, PointModel.adaptToServer(Object.assign({}, point)));
+    this._isSyncNeeded = true;
+    return Promise.resolve(point);
   }
 
   deletePoint(point) {
@@ -151,5 +147,9 @@ export default class Provider {
     }
 
     return Promise.reject(new Error(`Sync data failed`));
+  }
+
+  _isOnline() {
+    return window.navigator.onLine;
   }
 }
