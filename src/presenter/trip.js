@@ -50,101 +50,8 @@ export default class Trip {
     this._renderTrip();
   }
 
-  _handleViewAction(actionType, updateType, update) {
-    switch (actionType) {
-      case UserAction.UPDATE_POINT:
-        this._pointPresenter[update.id].setViewState(State.SAVING);
-        this._api.updatePoint(update)
-          .then((response) => {
-            this._pointsModel.updatePoint(updateType, response);
-          })
-          .catch(() => {
-            this._pointPresenter[update.id].setViewState(State.ABORTING);
-          });
-        break;
-      case UserAction.ADD_POINT:
-        this._pointNewPresenter.setSaving();
-        this._api.addPoint(update)
-          .then((response) => {
-            this._pointsModel.addPoint(updateType, response);
-          })
-          .catch(() => {
-            this._pointNewPresenter.setAborting();
-          });
-        break;
-      case UserAction.DELETE_POINT:
-        this._pointPresenter[update.id].setViewState(State.DELETING);
-        this._api.deletePoint(update)
-          .then(() => {
-            this._pointsModel.deletePoint(updateType, update);
-          })
-          .catch(() => {
-            this._pointPresenter[update.id].setViewState(State.ABORTING);
-          });
-        break;
-    }
-  }
-
-  _handleModelEvent(updateType, data) {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this._pointPresenter[data.id].init(
-            data,
-            Object.assign({}, this._offersModel.getOffers()),
-            Object.assign({}, this._destinationsModel.getDestinations())
-        );
-        break;
-      case UpdateType.MINOR:
-        this._clearTrip();
-        this._renderTrip();
-        break;
-      case UpdateType.MAJOR:
-        this._clearTrip(true);
-        this._renderTrip();
-        break;
-      case UpdateType.INIT:
-        this._isLoading = false;
-        remove(this._loadingComponent);
-        this._renderTrip();
-        break;
-      case UpdateType.OFFERS_INIT:
-        this._isOffersLoad = true;
-        if (this._isDestinationLoad) {
-          this._clearTrip();
-          this._renderTrip();
-        }
-        break;
-      case UpdateType.DESTINATIONS_INIT:
-        this._isDestinationLoad = true;
-        if (this._isOffersLoad) {
-          this._clearTrip();
-          this._renderTrip();
-        }
-        break;
-    }
-    if (this._isOffersLoad && this._isDestinationLoad) {
-      this._callback.enableAddPointButton();
-      Object
-        .values(this._pointPresenter)
-        .forEach((presenter) => presenter.enableEdit());
-    }
-  }
-
-  _handleModeChange() {
-    this._pointNewPresenter.destroy();
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.resetView());
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-
-    this._currentSortType = sortType;
-    this._clearTrip();
-    this._renderTrip();
+  setAddPointButtonEnableHandler(callback) {
+    this._callback.enableAddPointButton = callback;
   }
 
   show(resetSort = true) {
@@ -158,10 +65,6 @@ export default class Trip {
 
   hide() {
     this._tripContainer.classList.add(`visually-hidden`);
-  }
-
-  setAddPointButtonEnableHandler(callback) {
-    this._callback.enableAddPointButton = callback;
   }
 
   createPoint(callback) {
@@ -266,5 +169,103 @@ export default class Trip {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+  }
+
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        const justDataUpdating = updateType === UpdateType.PATCH;
+        this._pointPresenter[update.id].setViewState(State.SAVING, justDataUpdating);
+        this._api.updatePoint(update)
+          .then((response) => {
+            this._pointsModel.updatePoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setViewState(State.ABORTING);
+          });
+        break;
+      case UserAction.ADD_POINT:
+        this._pointNewPresenter.setSaving();
+        this._api.addPoint(update)
+          .then((response) => {
+            this._pointsModel.addPoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setAborting();
+          });
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointPresenter[update.id].setViewState(State.DELETING);
+        this._api.deletePoint(update)
+          .then(() => {
+            this._pointsModel.deletePoint(updateType, update);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setViewState(State.ABORTING);
+          });
+        break;
+    }
+  }
+
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._pointPresenter[data.id].init(
+            data,
+            Object.assign({}, this._offersModel.getOffers()),
+            Object.assign({}, this._destinationsModel.getDestinations())
+        );
+        break;
+      case UpdateType.MINOR:
+        this._clearTrip();
+        this._renderTrip();
+        break;
+      case UpdateType.MAJOR:
+        this._clearTrip(true);
+        this._renderTrip();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderTrip();
+        break;
+      case UpdateType.OFFERS_INIT:
+        this._isOffersLoad = true;
+        if (this._isDestinationLoad) {
+          this._clearTrip();
+          this._renderTrip();
+        }
+        break;
+      case UpdateType.DESTINATIONS_INIT:
+        this._isDestinationLoad = true;
+        if (this._isOffersLoad) {
+          this._clearTrip();
+          this._renderTrip();
+        }
+        break;
+    }
+    if (this._isOffersLoad && this._isDestinationLoad) {
+      this._callback.enableAddPointButton();
+      Object
+        .values(this._pointPresenter)
+        .forEach((presenter) => presenter.enableEdit());
+    }
+  }
+
+  _handleModeChange() {
+    this._pointNewPresenter.destroy();
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    this._clearTrip();
+    this._renderTrip();
   }
 }
