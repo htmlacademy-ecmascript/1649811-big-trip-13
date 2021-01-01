@@ -6,6 +6,11 @@ const createStoreStructure = (items) => {
   }, {});
 };
 
+const getSyncedPoints = (items) => {
+  return items.filter(({success}) => success)
+    .map(({payload}) => payload.point);
+};
+
 export default class Provider {
   constructor(api, store) {
     this._api = api;
@@ -83,7 +88,9 @@ export default class Provider {
 
       const newPoint = Object.assign({}, point, {id: `new-point-${nextId}`});
       this._store.setItem(nextId, PointModel.adaptToServer(newPoint));
+
       this._isSyncNeeded = true;
+
       return Promise.resolve(newPoint);
     } catch (err) {
       return Promise.reject(new Error(`Add point failed`));
@@ -104,7 +111,9 @@ export default class Provider {
       : point.id;
 
     this._store.setItem(id, PointModel.adaptToServer(Object.assign({}, point)));
+
     this._isSyncNeeded = true;
+
     return Promise.resolve(point);
   }
 
@@ -116,7 +125,9 @@ export default class Provider {
 
     try {
       this._store.removeItem(point.id);
+
       this._isSyncNeeded = true;
+
       return Promise.resolve();
     } catch (err) {
       return Promise.reject(new Error(`Delete point failed`));
@@ -135,14 +146,22 @@ export default class Provider {
         });
 
       return this._api.sync(storePoints)
-        .then((points) => {
+        .then((response) => {
+          try {
+            const createdPoints = response.created;
+            const updatedPoints = getSyncedPoints(response.updated);
 
-          this._isSyncNeeded = false;
+            const points = [...createdPoints, ...updatedPoints];
 
-          const items = createStoreStructure(points);
-          this._store.setItems(items);
+            const items = createStoreStructure(points);
+            this._store.setItems(items);
 
-          return points.map(PointModel.adaptToClient);
+            this._isSyncNeeded = false;
+
+            return points.map(PointModel.adaptToClient);
+          } catch (err) {
+            return Promise.reject(new Error(`Sync data failed`));
+          }
         });
     }
 
