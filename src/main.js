@@ -36,7 +36,7 @@ const destinationsModel = new DestinationsModel();
 
 const tripInfo = new TripInfoPresenter(tripInfoElement, pointsModel);
 const tripPresenter = new TripPresenter(
-    tripElement, pointsModel, filterModel, offersModel, destinationsModel, apiWithProvider
+  tripElement, pointsModel, filterModel, offersModel, destinationsModel, apiWithProvider
 );
 const filterPresenter = new FilterPresenter(filterHeaderElement, pointsModel, filterModel);
 const siteMenuComponent = new SiteMenuView(tripInfoElement);
@@ -89,8 +89,11 @@ apiWithProvider.getDestinations()
     destinationsModel.setDestination(UpdateType.DESTINATIONS_INIT, destinations);
   });
 
-window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`).then();
+window.addEventListener(`load`, async () => {
+  try {
+    await navigator.serviceWorker.register(`/sw.js`);
+  } catch (err) {
+  }
 });
 
 window.addEventListener(`offline`, () => {

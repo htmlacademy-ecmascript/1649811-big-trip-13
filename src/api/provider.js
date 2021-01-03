@@ -1,16 +1,5 @@
 import PointModel from "../model/points";
 
-const createStoreStructure = (items) => {
-  return items.reduce((acc, current) => {
-    return Object.assign({}, acc, {[current.id]: current});
-  }, {});
-};
-
-const getSyncedPoints = (items) => {
-  return items.filter(({success}) => success)
-    .map(({payload}) => payload.point);
-};
-
 export default class Provider {
   constructor(api, store) {
     this._api = api;
@@ -26,7 +15,7 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.getPoints()
         .then((points) => {
-          const items = createStoreStructure(points.map(PointModel.adaptToServer));
+          const items = this._createStoreStructure(points.map(PointModel.adaptToServer));
           this._store.setItems(items);
           return points;
         });
@@ -149,11 +138,11 @@ export default class Provider {
         .then((response) => {
           try {
             const createdPoints = response.created;
-            const updatedPoints = getSyncedPoints(response.updated);
+            const updatedPoints = this._getSyncedPoints(response.updated);
 
             const points = [...createdPoints, ...updatedPoints];
 
-            const items = createStoreStructure(points);
+            const items = this._createStoreStructure(points);
             this._store.setItems(items);
 
             this._isSyncNeeded = false;
@@ -166,6 +155,17 @@ export default class Provider {
     }
 
     return Promise.reject(new Error(`Sync data failed`));
+  }
+
+  _getSyncedPoints(items) {
+    return items.filter(({success}) => success)
+      .map(({payload}) => payload.point);
+  }
+
+  _createStoreStructure(items) {
+    return items.reduce((acc, current) => {
+      return Object.assign({}, acc, {[current.id]: current});
+    }, {});
   }
 
   _isOnline() {

@@ -6,7 +6,6 @@ import {getData, getLabels} from "../utils/statistics";
 const BAR_HEIGHT = 55;
 
 const renderMoneyChart = (moneyCtx, labels, moneys) => {
-
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -246,6 +245,14 @@ export default class Statistics extends SmartView {
     return createStatisticsTemplate();
   }
 
+  removeElement() {
+    super.removeElement();
+
+    this._moneyChart = null;
+    this._typeChart = null;
+    this._timeChart = null;
+  }
+
   restoreHandlers() {
     this._setCharts();
   }
@@ -256,11 +263,9 @@ export default class Statistics extends SmartView {
   }
 
   _setCharts() {
-    this._removeCharts();
-
-    this._moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
-    this._typeCtx = this.getElement().querySelector(`.statistics__chart--transport`);
-    this._timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
+    const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
+    const typeCtx = this.getElement().querySelector(`.statistics__chart--transport`);
+    const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
     const points = Object.values(this._data);
 
@@ -268,23 +273,10 @@ export default class Statistics extends SmartView {
 
     const [moneys, countTypes, countDays] = getData(labels, points);
 
-    this._moneyCtx.height = this._typeCtx.height = this._timeCtx.height
-      = BAR_HEIGHT * labels.length;
+    moneyCtx.height = typeCtx.height = timeCtx.height = BAR_HEIGHT * labels.length;
 
-    this._moneyChart = renderMoneyChart(this._moneyCtx, labels, moneys);
-    this._typeChart = renderTypeChart(this._typeCtx, labels, countTypes);
-    this._timeChart = renderTimeChart(this._timeCtx, labels, countDays);
-  }
-
-  _removeCharts() {
-    if (
-      this._moneyChart !== null ||
-      this._typeChart !== null ||
-      this._timeChart !== null
-    ) {
-      this._moneyChart = null;
-      this._typeChart = null;
-      this._timeChart = null;
-    }
+    this._moneyChart = renderMoneyChart(moneyCtx, labels, moneys);
+    this._typeChart = renderTypeChart(typeCtx, labels, countTypes);
+    this._timeChart = renderTimeChart(timeCtx, labels, countDays);
   }
 }

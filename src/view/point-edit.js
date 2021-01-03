@@ -466,7 +466,7 @@ export default class PointEdit extends SmartView {
     }
 
     if (errorMessage.length) {
-      modal(errorMessage, this._escKeyDownHandler);
+      modal(errorMessage);
       return;
     }
 
