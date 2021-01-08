@@ -1,6 +1,7 @@
 import flatpickr from "flatpickr";
 import {formatPointFormDate} from "../utils/point";
 import {modal} from "../utils/modal";
+import {isOnline} from "../utils/common";
 import SmartView from "./smart";
 
 import "flatpickr/dist/themes/material_blue.css";
@@ -103,7 +104,7 @@ const createDestinationImagesTemplate = (images) => {
 
 const createDestinationTemplate = (destination, info) => {
   const {description, images} = info;
-  const imageTemplate = (images.length > 0 && window.navigator.onLine)
+  const imageTemplate = (images.length > 0 && isOnline())
     ? createDestinationImagesTemplate(images)
     : ``;
   return `

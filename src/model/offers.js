@@ -1,4 +1,5 @@
 import Observer from "./observer";
+import {capitalizeFirstLetter} from "../utils/common";
 
 export default class Offers extends Observer {
   constructor() {
@@ -17,14 +18,13 @@ export default class Offers extends Observer {
   _adaptOffers(offers) {
     const adaptedOffers = {};
 
-    for (let i = 0; i < offers.length; i++) {
-      const name = offers[i].type[0].toUpperCase() + offers[i].type.slice(1);
-      adaptedOffers[name] = offers[i].offers.map((item) => {
-        return {
-          title: item.title,
-          price: item.price,
-        };
-      });
+    for (const offer of offers) {
+      const name = capitalizeFirstLetter(offer.type);
+
+      adaptedOffers[name] = offer.offers.map((item) => ({
+        title: item.title,
+        price: item.price,
+      }));
     }
 
     return adaptedOffers;

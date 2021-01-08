@@ -1,4 +1,5 @@
 import Observer from "./observer";
+import {capitalizeFirstLetter} from "../utils/common";
 
 export default class Points extends Observer {
   constructor() {
@@ -63,7 +64,7 @@ export default class Points extends Observer {
 
     return {
       id: clone.id,
-      pointType: clone.type[0].toUpperCase() + clone.type.slice(1),
+      pointType: capitalizeFirstLetter(clone.type),
       destination: clone.destination.name,
       offers: clone.offers,
       price: clone.base_price,

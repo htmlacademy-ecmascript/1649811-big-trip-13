@@ -17,13 +17,13 @@ export default class Destinations extends Observer {
   _adaptDestinations(destinations) {
     const adaptedDestinations = {};
 
-    for (let i = 0; i < destinations.length; i++) {
-      const info = {
-        description: destinations[i].description,
-        images: destinations[i].pictures,
+    for (const destination of destinations) {
+      adaptedDestinations[destination.name] = {
+        info: {
+          description: destination.description,
+          images: destination.pictures
+        }
       };
-
-      adaptedDestinations[destinations[i].name] = {info};
     }
 
     return adaptedDestinations;
