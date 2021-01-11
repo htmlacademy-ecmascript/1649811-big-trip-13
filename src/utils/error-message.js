@@ -4,7 +4,7 @@ coverElement.classList.add(`cover`);
 const messageElement = document.createElement(`div`);
 messageElement.classList.add(`error-message`);
 
-export const modalWindow = (messageHtml) => {
+export const errorMessage = (messageHtml) => {
   messageHtml += `<button class="ok-button">OK</button>`;
   messageElement.innerHTML = messageHtml;
 
