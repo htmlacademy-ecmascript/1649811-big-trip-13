@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import {formatPointFormDate} from "../utils/point";
-import {modalWindow} from "../utils/modal-window";
+import {errorMessage} from "../utils/error-message";
 import {isOnline} from "../utils/common";
 import SmartView from "./smart";
 
@@ -449,25 +449,25 @@ export default class PointEdit extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
 
-    let errorMessage = ``;
+    let messageHtml = ``;
 
     if (!(this._data.destination in this._destinations)) {
-      errorMessage = `<p>Destination not selected.</p>`;
+      messageHtml = `<p>Destination not selected.</p>`;
     }
 
     if (!this._data.date.start) {
-      errorMessage += `<p>No start date selected.</p>`;
+      messageHtml += `<p>No start date selected.</p>`;
     }
 
     if (!this._data.date.end) {
-      errorMessage += `<p>No end date selected.</p>`;
+      messageHtml += `<p>No end date selected.</p>`;
     }
     if (this._data.date.start > this._data.date.end) {
-      errorMessage += `<p>Start date cannot be greater than end date</p>`;
+      messageHtml += `<p>Start date cannot be greater than end date</p>`;
     }
 
     if (errorMessage.length) {
-      modalWindow(errorMessage);
+      errorMessage(messageHtml);
       return;
     }
 
