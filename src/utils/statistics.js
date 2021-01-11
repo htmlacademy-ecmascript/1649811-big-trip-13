@@ -5,7 +5,7 @@ export const getLabels = (points) => {
   return [...new Set(labels)];
 };
 
-const minutesToDays = (minutes) => {
+const getDays = (minutes) => {
   return Math.ceil(minutes / 1440);
 };
 
@@ -30,7 +30,7 @@ export const getData = (labels, points) => {
 
     moneys.push(price);
     countTypes.push(count);
-    countDays.push(minutesToDays(minutes));
+    countDays.push(getDays(minutes));
   });
 
   return [moneys, countTypes, countDays];

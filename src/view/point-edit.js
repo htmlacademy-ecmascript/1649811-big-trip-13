@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import {formatPointFormDate} from "../utils/point";
-import {modal} from "../utils/modal";
+import {modalWindow} from "../utils/modal-window";
 import {isOnline} from "../utils/common";
 import SmartView from "./smart";
 
@@ -408,7 +408,7 @@ export default class PointEdit extends SmartView {
   }
 
   _destinationChangeHandler(evt) {
-    let city = evt.target.value;
+    const city = evt.target.value;
 
     if (!city || !(city in this._destinations)) {
       evt.target.value = this._data.destination;
@@ -467,7 +467,7 @@ export default class PointEdit extends SmartView {
     }
 
     if (errorMessage.length) {
-      modal(errorMessage);
+      modalWindow(errorMessage);
       return;
     }
 
